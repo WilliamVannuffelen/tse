@@ -2,10 +2,8 @@ package cmd
 
 import (
 	"os"
-
 	"github.com/spf13/cobra"
 	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
-	"github.com/williamvannuffelen/tse/config"
 )
 
 var log logger.Logger
@@ -39,6 +37,4 @@ func init() {
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	rootCmd.Flags().BoolP("help", "h", false, "Help message for help")
 	rootCmd.PersistentFlags().String("debug", "d", "Enable debug logging")
-
-	config.InitConfig( /* debugEnabled */ false)
 }
