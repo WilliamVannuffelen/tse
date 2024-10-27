@@ -20,17 +20,15 @@ func main() {
 	if err != nil {
 		log.Warn(err)
 	}
-	log.Info("Foo!")
-	log.Info(config.General.DebugEnabled)
 	//cmd.SetLogger(log)
 	//cmd.Execute()
 	//workitem.SetLogger(log)
 	//workitem.Run()
 	excel.SetLogger(log)
-	err = excel.MakeSheet("t_upload2.xlsx", "2024-10-21", "")
+	excelFile, err := excel.SetTargetSheet("ebase.xlsx", "", config.File.TemplateSheetName)
 	if err != nil {
 		log.Warn(err)
 	} else {
-		log.Info("Sheet created")
+		log.Info("Selected sheet ", excelFile.Path)
 	}
 }
