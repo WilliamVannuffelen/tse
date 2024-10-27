@@ -6,9 +6,9 @@ package main
 import (
 	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
 	_ "github.com/williamvannuffelen/tse/cmd"
-	_ "github.com/williamvannuffelen/tse/workitem"
-	"github.com/williamvannuffelen/tse/excel"
 	"github.com/williamvannuffelen/tse/config"
+	"github.com/williamvannuffelen/tse/excel"
+	_ "github.com/williamvannuffelen/tse/workitem"
 )
 
 // UNUSED allows unused variables to be included in Go programs

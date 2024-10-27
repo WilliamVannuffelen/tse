@@ -1,14 +1,14 @@
 package excel
 
 import (
+	"github.com/xuri/excelize/v2"
 	"strconv"
-  "github.com/xuri/excelize/v2"
 )
 
 func AppendRow(excelFile *excelize.File, sheet string, row []interface{}) error {
 	rows, err := excelFile.GetRows(sheet)
 	if err != nil {
-			return err
+		return err
 	}
 
 	nextRow := len(rows) + 1

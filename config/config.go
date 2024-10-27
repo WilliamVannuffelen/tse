@@ -15,14 +15,14 @@ type Config struct {
 }
 
 type GeneralConfig struct {
-	DebugEnabled bool `mapstructure:"debugEnabled"`
-	LogLevel 	 string `mapstructure:"logLevel"`
-	SilenceConfigWarnings bool `mapstructure:"silenceConfigWarnings"`
+	DebugEnabled          bool   `mapstructure:"debugEnabled"`
+	LogLevel              string `mapstructure:"logLevel"`
+	SilenceConfigWarnings bool   `mapstructure:"silenceConfigWarnings"`
 }
 
 type FileConfig struct {
-	TargetFilePath  string `mapstructure:"targetFilePath"`
-	TargetSheetName string `mapstructure:"targetSheetName"`
+	TargetFilePath    string `mapstructure:"targetFilePath"`
+	TargetSheetName   string `mapstructure:"targetSheetName"`
 	TemplateSheetName string `mapstructure:"templateSheetName"`
 }
 

@@ -2,7 +2,7 @@ package excel
 
 import (
 	"fmt"
-  "github.com/xuri/excelize/v2"
+	"github.com/xuri/excelize/v2"
 )
 
 func MakeSheetFromTemplate(excelFile *excelize.File, sheetName string, templateSheetName string) (int, error) {
@@ -20,7 +20,6 @@ func MakeSheetFromTemplate(excelFile *excelize.File, sheetName string, templateS
 	}
 	return newSheetIndex, nil
 }
-
 
 func MakeSheet(excelFile *excelize.File, sheetName string) (int, error) {
 	newSheetIndex, err := excelFile.NewSheet(sheetName)
