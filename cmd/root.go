@@ -1,9 +1,11 @@
 package cmd
 
 import (
+	"os"
+
 	"github.com/spf13/cobra"
 	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
-	"os"
+	"github.com/williamvannuffelen/tse/config"
 )
 
 var log logger.Logger
@@ -25,7 +27,7 @@ var rootCmd = &cobra.Command{
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
+func Execute(config config.Config) {
 	log.Info("f")
 	err := rootCmd.Execute()
 	if err != nil {

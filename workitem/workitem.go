@@ -55,7 +55,7 @@ type KiaraWorkItem struct {
 	Date        string
 	Description string
 	JiraRef     string
-	TimeSpent   float64
+	TimeSpent   string
 	Project     string
 	AppRef      string
 }
@@ -66,7 +66,7 @@ func NewKiaraWorkItem(
 	jiraRef string,
 	project string,
 	appRef string,
-	timeSpent float64,
+	timeSpent string,
 ) *KiaraWorkItem {
 	kwi := &KiaraWorkItem{
 		Description: description,
@@ -75,6 +75,7 @@ func NewKiaraWorkItem(
 		Project:     project,
 		AppRef:      appRef,
 	}
+	//log.Debug("KiaraWorkItem created.")
 	kwi.SetDate(date)
 	kwi.SetDefaultValue("JiraRef", "OPS-305", false, jiraRef)
 	kwi.SetDefaultValue("Project", "CS0126444 - Wonen Cloudzone - dedicated operationeel projectteam", true, project)
@@ -86,7 +87,7 @@ func Run() {
 	var date string = ""
 	var description string = "Test work item"
 	var jiraRef string = ""
-	var timeSpent float64 = 1.0
+	var timeSpent string = "1.0"
 	var project string = ""
 	var appRef string = "Test app ref"
 
@@ -99,7 +100,7 @@ func Run() {
 		timeSpent,
 	)
 	log.Debug(fmt.Sprintf(
-		"KiaraWorkItem:\nDate: %s\nDescription: %s\nJiraRef: %s\nTimeSpent: %f\nProject: %s\nAppRef: %s",
+		"KiaraWorkItem:\nDate: %s\nDescription: %s\nJiraRef: %s\nTimeSpent: %s\nProject: %s\nAppRef: %s",
 		kwi.Date,
 		kwi.Description,
 		kwi.JiraRef,
