@@ -2,6 +2,7 @@ package excel
 
 import (
 	"fmt"
+	help "github.com/williamvannuffelen/tse/helpers"
 	"github.com/xuri/excelize/v2"
 	"time"
 	//logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
@@ -11,7 +12,7 @@ func FindSheetIndex(excelFile *excelize.File, sheetName string) (int, error) {
 	log.Debug(fmt.Sprintf("Finding sheet index for sheet '%s'", sheetName))
 	index, err := excelFile.GetSheetIndex(sheetName)
 	if err != nil {
-		return -1, err
+		return -1, fmt.Errorf("%s %w", help.NewErrorStackTraceString(fmt.Sprintf("failed to grab sheet index for %s", sheetName)), err)
 	}
 
 	return index, nil
@@ -21,6 +22,9 @@ func FindLastSheetIndex(excelFile *excelize.File) (int, error) {
 	log.Debug("Finding last sheet index")
 	sheetList := excelFile.GetSheetList()
 	lastSheetIndex := len(sheetList) - 1
+	if lastSheetIndex < 0 {
+		return -1, fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to find last sheet index"), fmt.Errorf("no sheets found"))
+	}
 	return lastSheetIndex, nil
 }
 
