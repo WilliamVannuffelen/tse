@@ -5,12 +5,11 @@ General:
 
 File:
   # The path to the target file. The file should be in the xlsx format.
-  targetFilePath: "./t_upload.xlsx"
+  targetFilePath: "./ebase.xlsx"
   # The name of the sheet in the file that will be used for the upload. If the sheet name is not provided, a sheet with the yyyy-MM-dd format of the first day of this week.
   targetSheetName: ""
-
   #TO ADD
-  templateSheetName: "" # Name of the empty, but formatted sheet used to create new ones
+  templateSheetName: "Template" # Name of the empty, but formatted sheet used to create new ones
 
 Project:
   # The default project name that will be used for the upload.
@@ -19,11 +18,11 @@ Project:
 JiraRef:
   # The default value for the Jira reference field.
   defaultValue: "OPS-305"
-  # If the default value should be set for the Jira reference field.
+  # Whether the default value should be set for the Jira reference field.
   setDefaultValue: true
 
 AppRef:
   # The default value for the Application reference field.
   defaultValue: ""
-  # If the default value should be set for the Application reference field.
+  # Whether the default value should be set for the Application reference field.
   setDefaultValue: false
