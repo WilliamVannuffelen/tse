@@ -2,7 +2,7 @@ package excel
 
 import (
 	"fmt"
-  "github.com/xuri/excelize/v2"
+	"github.com/xuri/excelize/v2"
 )
 
 func OpenExcelFile(fileName string) (*excelize.File, error) {
@@ -14,16 +14,16 @@ func OpenExcelFile(fileName string) (*excelize.File, error) {
 	return excelFile, nil
 }
 
-func SaveExcelFile (excelFile *excelize.File) () {
+func SaveExcelFile(excelFile *excelize.File) {
 	newRow := []interface{}{"Mo", "2024-10-05", "new task", "OPS-999", 3, "New Project", "AppRef"}
 	if err := AppendRow(excelFile, "2024-10-21", newRow); err != nil {
-			fmt.Println("Error appending row:", err)
-			return
+		fmt.Println("Error appending row:", err)
+		return
 	}
 	// Save the file
 	if err := excelFile.SaveAs("ebase.xlsx"); err != nil {
-			fmt.Println("Error saving file:", err)
-			return
+		fmt.Println("Error saving file:", err)
+		return
 	} else {
 		log.Debug("Saved file successfully!", err)
 	}

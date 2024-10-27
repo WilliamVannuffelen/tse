@@ -2,18 +2,16 @@ package excel
 
 import (
 	"fmt"
+	"github.com/xuri/excelize/v2"
 	"time"
-  "github.com/xuri/excelize/v2"
-  //logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
+	//logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
 )
-
-
 
 func FindSheetIndex(excelFile *excelize.File, sheetName string) (int, error) {
 	log.Debug(fmt.Sprintf("Finding sheet index for sheet '%s'", sheetName))
 	index, err := excelFile.GetSheetIndex(sheetName)
 	if err != nil {
-			return -1, err
+		return -1, err
 	}
 
 	return index, nil
@@ -40,11 +38,10 @@ func FindTemplateSheet(excelFile *excelize.File, templateSheetName string) (int,
 	log.Debug(fmt.Sprintf("Finding template sheet index for sheet '%s'", templateSheetName))
 	index, err := excelFile.GetSheetIndex(templateSheetName)
 	if err != nil {
-			return -1, err
+		return -1, err
 	}
 	return index, nil
 }
-
 
 // perhaps not in the right place, figure out where to put this later
 func GetCurrentWeekSheetName() string {

@@ -2,8 +2,8 @@ package excel
 
 import (
 	"fmt"
-  "github.com/xuri/excelize/v2"
-  logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
+	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
+	"github.com/xuri/excelize/v2"
 )
 
 var log logger.Logger

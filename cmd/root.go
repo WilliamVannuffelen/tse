@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"os"
 	"github.com/spf13/cobra"
 	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
+	"os"
 )
 
 var log logger.Logger
