@@ -4,13 +4,13 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package main
 
 import (
-	_ "fmt"
+	"fmt"
 	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
 	"github.com/williamvannuffelen/tse/cmd"
 	"github.com/williamvannuffelen/tse/config"
 	"github.com/williamvannuffelen/tse/excel"
+	"github.com/williamvannuffelen/tse/keywords"
 	"github.com/williamvannuffelen/tse/workitem"
-	_ "runtime"
 )
 
 // UNUSED allows unused variables to be included in Go programs
@@ -37,16 +37,13 @@ func main() {
 	workitem.SetLogger(log)
 	excel.SetLogger(log)
 
-	cmd.Execute(appConfig)
+	//cmd.Execute(appConfig)
 
-	//workitem.Run()
-
-	// excel.SetLogger(log)
-	// excelFile, err := excel.SetTargetSheet("ebase.xlsx", "", config.File.TemplateSheetName)
-	// if err != nil {
-	// 	//log.Warn(err)
-	// 	log.Warn(fmt.Sprintf("Error: %+v", err))
-	// } else {
-	// 	log.Info("Selected sheet ", excelFile.Path)
-	// }
+	keywords.SetLogger(log)
+	param := "crma"
+	matchedKeyword, err := keywords.MatchKeyWords("./keywords/keywords.json", param)
+	if err != nil {
+		log.Warn(err)
+	}
+	log.Info(fmt.Sprintf("Matched keyword for %s", param), matchedKeyword)
 }

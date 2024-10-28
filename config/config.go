@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"github.com/spf13/viper"
 	"log"
 	"os"
@@ -67,36 +68,31 @@ func InitConfig() Config {
 	}
 	debugEnabled := config.General.DebugEnabled
 	if debugEnabled {
-		log.Println("Running in debug mode. Will print verbose messages.")
-	}
-	if debugEnabled {
+		log.Println("Running in debug mode. Will print verbose messages. Set debugMode to false in config file to disable.")
 		log.Println("Unmarshalled config file.")
-	}
-	if debugEnabled {
 		log.Printf("Config: %+v\n", config)
 	}
 
 	if !config.General.SilenceConfigWarnings {
-		if config.General.LogLevel == "" {
-			log.Println("Warning: LogLevel is empty. Will use 'info'.")
+		warnings := []struct {
+			value      string
+			field      string
+			defaultMsg string
+		}{
+			{config.General.LogLevel, "LogLevel", "Will use 'info'."},
+			{config.File.TargetFilePath, "TargetFilePath", ""},
+			{config.File.TargetSheetName, "TargetSheetName", ""},
+			{config.File.TemplateSheetName, "TemplateSheetName", "Will use sheet at index 0."},
+			{config.Project.DefaultProjectName, "DefaultProjectName", ""},
+			{config.JiraRef.DefaultValue, "JiraRef DefaultValue", ""},
+			{config.AppRef.DefaultValue, "AppRef DefaultValue", ""},
 		}
-		if config.File.TargetFilePath == "" {
-			log.Println("Warning: TargetFilePath is empty")
-		}
-		if config.File.TargetSheetName == "" {
-			log.Println("Warning: TargetSheetName is empty")
-		}
-		if config.File.TemplateSheetName == "" {
-			log.Println("Warning: TemplateSheetName is empty. Will use sheet at index 0.")
-		}
-		if config.Project.DefaultProjectName == "" {
-			log.Println("Warning: DefaultProjectName is empty")
-		}
-		if config.JiraRef.DefaultValue == "" {
-			log.Println("Warning: JiraRef DefaultValue is empty")
-		}
-		if config.AppRef.DefaultValue == "" {
-			log.Println("Warning: AppRef DefaultValue is empty")
+
+		for _, w := range warnings {
+			if w.value == "" {
+				message := fmt.Sprintf("Warning: %s is empty. %s Set 'silenceConfigWarnings: true' in config file to suppress this warning.", w.field, w.defaultMsg)
+				log.Println(message)
+			}
 		}
 	}
 	return config

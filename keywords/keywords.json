@@ -1,0 +1,10 @@
+{
+  "crmt": {
+    "jiraRef": "OPS-1234",
+    "project": "Wonen whatever project"
+  },
+  "crmp": {
+    "jiraRef": "OPS-3456",
+    "project": "Wonen whatever project"
+  }
+}
