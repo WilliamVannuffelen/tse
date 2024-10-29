@@ -26,7 +26,7 @@ func MatchParamToKeywords(keywords map[string]json.RawMessage, param string) (Ke
 	return nil, nil
 }
 
-func MatchKeyWords(fileName string, param string) (Keyword, error) {
+func MatchKeywords(fileName string, param string) (Keyword, error) {
 	errorMessage := "failed to match keywords"
 	keywords, err := UnmarshalToKeywords(fileName)
 	if err != nil {

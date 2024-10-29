@@ -4,7 +4,7 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package main
 
 import (
-	"fmt"
+	_ "fmt"
 	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
 	"github.com/williamvannuffelen/tse/cmd"
 	"github.com/williamvannuffelen/tse/config"
@@ -28,22 +28,24 @@ func UNUSED(x ...interface{}) {}
 // }
 
 func main() {
-	appConfig := config.InitConfig()
-	log, err := logger.InitLogger("log.txt", appConfig.General.LogLevel)
-	if err != nil {
-		log.Warn(err)
-	}
-	cmd.SetLogger(log)
-	workitem.SetLogger(log)
-	excel.SetLogger(log)
+	// appConfig := config.InitConfig()
+	// log, err := logger.InitLogger("log.txt", appConfig.General.LogLevel)
+	// if err != nil {
+	// 	log.Warn(err)
+	// }
+	// cmd.SetLogger(log)
+	// workitem.SetLogger(log)
+	// excel.SetLogger(log)
+	// keywords.SetLogger(log)
 
-	//cmd.Execute(appConfig)
+	// cmd.Execute(appConfig)
 
-	keywords.SetLogger(log)
-	param := "crma"
-	matchedKeyword, err := keywords.MatchKeyWords("./keywords/keywords.json", param)
-	if err != nil {
-		log.Warn(err)
-	}
-	log.Info(fmt.Sprintf("Matched keyword for %s", param), matchedKeyword)
+	cmd.Execute()
+
+	// param := "crma"
+	// matchedKeyword, err := keywords.MatchKeywords("./keywords/keywords.json", param)
+	// if err != nil {
+	// 	log.Warn(err)
+	// }
+	// log.Info(fmt.Sprintf("Matched keyword for %s", param), matchedKeyword)
 }
