@@ -4,13 +4,13 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package main
 
 import (
-	_ "fmt"
-	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
+	// _ "fmt"
+	// logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
 	"github.com/williamvannuffelen/tse/cmd"
-	"github.com/williamvannuffelen/tse/config"
-	"github.com/williamvannuffelen/tse/excel"
-	"github.com/williamvannuffelen/tse/keywords"
-	"github.com/williamvannuffelen/tse/workitem"
+	// "github.com/williamvannuffelen/tse/config"
+	// "github.com/williamvannuffelen/tse/excel"
+	// "github.com/williamvannuffelen/tse/keywords"
+	// "github.com/williamvannuffelen/tse/workitem"
 )
 
 // UNUSED allows unused variables to be included in Go programs

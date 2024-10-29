@@ -2,7 +2,7 @@ package workitem
 
 import (
 	"fmt"
-	"github.com/spf13/viper"
+	_ "github.com/spf13/viper"
 	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
 	"github.com/williamvannuffelen/tse/config"
 	"time"

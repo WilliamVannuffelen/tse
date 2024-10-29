@@ -10,8 +10,6 @@ import (
 	help "github.com/williamvannuffelen/tse/helpers"
 )
 
-type Keyword interface{}
-
 type BasicKeyword struct {
 	JiraRef string `json:"jiraRef"`
 	Project string `json:"project"`
@@ -45,6 +43,7 @@ func UnmarshalJson(byteValue []byte) (map[string]json.RawMessage, error) {
 	log.Debug("Unmarshalling json.")
 	var keywords map[string]json.RawMessage
 	err := json.Unmarshal(byteValue, &keywords)
+	log.Debug("Finished unmarshaling")
 	if err != nil {
 		return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to unmarshal bytearray to json"), err)
 	}
@@ -64,6 +63,7 @@ func UnmarshalToKeywords(fileName string) (map[string]json.RawMessage, error) {
 		return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString(errorMessage), err)
 	}
 	keywords, err := UnmarshalJson(byteValue)
+	log.Debug("Done unmarshalling keywords")
 	if err != nil {
 		return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString(errorMessage), err)
 	}

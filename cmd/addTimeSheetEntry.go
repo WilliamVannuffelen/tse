@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
 	"github.com/williamvannuffelen/tse/config"
 	"github.com/williamvannuffelen/tse/excel"
 	help "github.com/williamvannuffelen/tse/helpers"
@@ -14,6 +15,51 @@ import (
 
 var appConfig config.Config
 
+var log logger.Logger
+
+func SetLogger(l logger.Logger) {
+	log = l
+}
+
+func MatchAndExtractKeywords(filePath string, keyword string) (map[string]string, error) {
+	log.Debug("Matching keywords for keyword: ", keyword)
+	kw, err := keywords.MatchKeywords(filePath, keyword)
+	if err != nil {
+		return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString(fmt.Sprintf("failed to get info for provided keyword '%s'", keyword)), err)
+	}
+	keywordValues := map[string]string{
+		"description": kw.Description,
+		"jira-ref":    kw.JiraRef,
+		"project":     kw.Project,
+	}
+	log.Debug("Got values from keyword: ", keywordValues["description"], keywordValues["jiraRef"], keywordValues["project"])
+	return keywordValues, nil
+}
+
+func ProcessKeywords(values map[string]string) (map[string]string, error) {
+	log.Debug("inside processkw")
+	if values["keyword"] != "" {
+		log.Debug("Keyword provided. Fetching values.")
+		keywordValues, err := MatchAndExtractKeywords("./keywords/keywords_exact.json", values["keyword"])
+		if err != nil {
+			return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString(fmt.Sprintf("failed to get info for keyword '%s'", values["keyword"])), err)
+		}
+		values["description"] = keywordValues["description"]
+		values["jira-ref"] = keywordValues["jira-ref"]
+		values["project"] = keywordValues["project"]
+	}
+	if values["basic-keyword"] != "" {
+		log.Debug("Basic keyword provided. Fetching values.")
+		keywordValues, err := MatchAndExtractKeywords("./keywords/keywords.json", values["basic-keyword"])
+		if err != nil {
+			return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString(fmt.Sprintf("failed to get info for keyword '%s'", values["basic-keyword"])), err)
+		}
+		values["jira-ref"] = keywordValues["jira-ref"]
+		values["project"] = keywordValues["project"]
+	}
+	return values, nil
+}
+
 var addTimeSheetEntryCmd = &cobra.Command{
 	Use:           "addTimeSheetEntry",
 	Short:         "Add timesheet entry",
@@ -21,52 +67,41 @@ var addTimeSheetEntryCmd = &cobra.Command{
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	Run: func(cmd *cobra.Command, args []string) {
-		flags := []string{"date", "description", "jira-ref", "time", "project", "app-ref", "keyword"}
-		values := make(map[string]string)
+		appConfig := config.InitConfig()
+		log, err := logger.InitLogger("log.txt", appConfig.General.LogLevel)
+		if err != nil {
+			log.Warn(err)
+		}
+		SetLogger(log)
+		workitem.SetLogger(log)
+		excel.SetLogger(log)
+		keywords.SetLogger(log)
 
+		log.Debug("processing flags")
+		flags := []string{"date", "description", "jira-ref", "time", "project", "app-ref", "keyword", "basic-keyword"}
+		values := make(map[string]string)
 		for _, flag := range flags {
 			value, _ := cmd.Flags().GetString(flag)
 			values[flag] = value
 			log.Debug(fmt.Sprintf("%s: %s", flag, value))
 		}
-
-		//TODO: add case here for keyword, fullkeyword
-		date := values["date"]
-		description := values["description"]
-		jiraRef := values["jira-ref"]
-		time := values["time"]
-		project := values["project"]
-		appRef := values["app-ref"]
-		basicKeyword := values["basic-keyword"]
-		keyword := values["keyword"]
-
-		if keyword != "" {
-			log.Debug("Keyword provided.")
-			// TODO: source keywords paths from config?
-			kw, err := keywords.MatchKeywords("./keywords/keywords_exact.json", keyword)
-			if err != nil {
-				fmt.Errorf("%s %w", help.NewErrorStackTraceString(fmt.Sprintf("failed to get info for keyword '%s'", keyword)), err)
-			}
-			//TODO: add appref to fullkeyword
-			description = kw.(keywords.FullKeyword).Description
-			jiraRef = kw.(keywords.FullKeyword).JiraRef
-			project = kw.(keywords.FullKeyword).Project
+		processedValues, err := ProcessKeywords(values)
+		if err != nil {
+			fmt.Errorf("%s %w", help.NewErrorStackTraceString(fmt.Sprintf("failed to process keyword info")), err)
 		}
-
-		if basicKeyword != "" {
-			log.Debug("Basic Keyword provided.")
-			// TODO: source keywords paths from config?
-			kw, err := keywords.MatchKeywords("./keywords/keywords.json", basicKeyword)
-			if err != nil {
-				fmt.Errorf("%s %w", help.NewErrorStackTraceString(fmt.Sprintf("failed to get info for keyword '%s'", basicKeyword)), err)
-			}
-			jiraRef = kw.(keywords.BasicKeyword).JiraRef
-			project = kw.(keywords.BasicKeyword).Project
-		}
+		log.Debug("Processed values: ", processedValues)
 
 		//TODO: error if one of permutations is not reached
 
-		workItem := CreateKiaraWorkItem(appConfig, date, description, jiraRef, time, project, appRef)
+		workItem := CreateKiaraWorkItem(
+			appConfig,
+			processedValues["date"],
+			processedValues["description"],
+			processedValues["jiraRef"],
+			processedValues["time"],
+			processedValues["project"],
+			processedValues["appRef"],
+		)
 		log.Debug(fmt.Sprintf("WorkItem: %+v", workItem))
 
 		targetFilePath := viper.Get("File.targetFilePath").(string)
@@ -78,7 +113,7 @@ var addTimeSheetEntryCmd = &cobra.Command{
 		}
 		log.Debug("sheetName: ", sheetName)
 		templateSheetName := viper.Get("File.templateSheetName").(string)
-		err := WriteTimeSheetEntry(targetFilePath, sheetName, templateSheetName, workItem)
+		err = WriteTimeSheetEntry(targetFilePath, sheetName, templateSheetName, workItem)
 		if err != nil {
 			log.Error(err)
 		}
