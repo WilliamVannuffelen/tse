@@ -44,6 +44,7 @@ func SetTargetSheet(fileName string, sheetName string, templateSheetName string)
 
 func AddNewTimesheetEntry(excelFile *excelize.File, sheet string, workItem *workitem.KiaraWorkItem) error {
 	row := []interface{}{
+		workItem.Day,
 		workItem.Date,
 		workItem.Description,
 		workItem.JiraRef,

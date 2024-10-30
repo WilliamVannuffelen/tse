@@ -27,6 +27,12 @@ func (kwi *KiaraWorkItem) SetDate(date string) {
 	kwi.Date = date
 }
 
+func (kwi *KiaraWorkItem) SetDay(date string) {
+	parsedDate, _ := time.Parse("2006-01-02", date)
+	dayofWeek := parsedDate.Weekday().String()[:3]
+	kwi.Day = dayofWeek
+}
+
 func (kwi *KiaraWorkItem) SetDefaultValue(valueType string, defaultValue string, setDefaultValue bool, value string) {
 	if value == "" {
 		log.Debug("value is empty")
@@ -52,9 +58,11 @@ func (kwi *KiaraWorkItem) SetDefaultValue(valueType string, defaultValue string,
 type KiaraWorkItemGenerator interface {
 	SetDate(date string)
 	SetDefaultValue(valueType string, defaultValue string, setDefaultValue bool, value string)
+	SetDay(date string)
 }
 
 type KiaraWorkItem struct {
+	Day         string
 	Date        string
 	Description string
 	JiraRef     string
@@ -82,7 +90,7 @@ func NewKiaraWorkItem(
 	//log.Debug("KiaraWorkItem created.")
 	// hardcoded true for setDefaultValue since everyone logically wants a default project
 	kwi.SetDate(date)
-	log.Debug("kkproject is ", project)
+	kwi.SetDay(kwi.Date)
 	kwi.SetDefaultValue("JiraRef", appConfig.JiraRef.DefaultValue, appConfig.JiraRef.SetDefaultValue, jiraRef)
 	kwi.SetDefaultValue("Project", appConfig.Project.DefaultProjectName, true, project)
 	kwi.SetDefaultValue("AppRef", appConfig.AppRef.DefaultValue, appConfig.AppRef.SetDefaultValue, appRef)

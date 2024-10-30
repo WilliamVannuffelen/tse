@@ -78,6 +78,8 @@ var addTimeSheetEntryCmd = &cobra.Command{
 		excel.SetLogger(log)
 		keywords.SetLogger(log)
 
+		// TODO: Add validation for date fmt = yyyy-MM-dd
+		// TODO: add validation for time fmt: 1 or 1.5 - not 1,5
 		log.Debug("processing flags")
 		flags := []string{"date", "description", "jira-ref", "time", "project", "app-ref", "keyword", "basic-keyword"}
 		values := make(map[string]string)
@@ -93,7 +95,7 @@ var addTimeSheetEntryCmd = &cobra.Command{
 		log.Debug("Processed values: ", processedValues)
 
 		if processedValues["description"] == "" {
-			log.Error("No description provided. Provide one using -p or use a keyword with -k or -K.")
+			log.Error("No description provided. Provide one using -d or use a keyword with -k or -K.")
 			return
 		}
 
@@ -126,8 +128,8 @@ var addTimeSheetEntryCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(addTimeSheetEntryCmd)
 	addTimeSheetEntryCmd.Flags().BoolP("help", "h", false, "Display this help message")
-	addTimeSheetEntryCmd.Flags().StringP("date", "d", "", "Date of the timesheet entry in yyyy-MM-dd format. Will default to today if not provided.")
-	addTimeSheetEntryCmd.Flags().StringP("description", "D", "", "Description of the timesheet entry")
+	addTimeSheetEntryCmd.Flags().StringP("date", "D", "", "Date of the timesheet entry in yyyy-MM-dd format. Will default to today if not provided.")
+	addTimeSheetEntryCmd.Flags().StringP("description", "d", "", "Description of the timesheet entry")
 	addTimeSheetEntryCmd.Flags().StringP("jira-ref", "j", "", "Jira reference of the timesheet entry. Will default to the value set in config.yaml")
 	addTimeSheetEntryCmd.Flags().StringP("time", "t", "0", "Time spent, in hours, of the timesheet entry")
 	addTimeSheetEntryCmd.Flags().StringP("project", "p", "", "Project of the timesheet entry. Will default to the value set in config.yaml")
