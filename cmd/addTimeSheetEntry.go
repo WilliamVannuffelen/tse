@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
+	//logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
 	"github.com/williamvannuffelen/tse/config"
 	"github.com/williamvannuffelen/tse/excel"
 	help "github.com/williamvannuffelen/tse/helpers"
@@ -12,11 +12,12 @@ import (
 	"github.com/williamvannuffelen/tse/workitem"
 )
 
-var log logger.Logger
+//var log logger.Logger
+// var err error
 
-func SetLogger(l logger.Logger) {
-	log = l
-}
+// func SetLogger(l logger.Logger) {
+// 	log = l
+// }
 
 func MatchAndExtractKeywords(filePath string, keyword string) (map[string]string, error) {
 	log.Debug("Matching keywords for keyword: ", keyword)
@@ -68,15 +69,15 @@ var addTimeSheetEntryCmd = &cobra.Command{
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	Run: func(cmd *cobra.Command, args []string) {
-		appConfig := config.InitConfig()
-		log, err := logger.InitLogger("log.txt", appConfig.General.LogLevel)
-		if err != nil {
-			log.Warn(err)
-		}
-		SetLogger(log) // not redundant: required for funcs inside cmd package, but outside of Run
-		workitem.SetLogger(log)
-		excel.SetLogger(log)
-		keywords.SetLogger(log)
+		// appConfig := config.InitConfig()
+		// log, err := logger.InitLogger("log.txt", appConfig.General.LogLevel)
+		// if err != nil {
+		// 	log.Warn(err)
+		// }
+		// SetLogger(log) // not redundant: required for funcs inside cmd package, but outside of Run
+		// workitem.SetLogger(log)
+		// excel.SetLogger(log)
+		// keywords.SetLogger(log)
 
 		// TODO: Add validation for date fmt = yyyy-MM-dd
 		// TODO: add validation for time fmt: 1 or 1.5 - not 1,5
@@ -109,8 +110,6 @@ var addTimeSheetEntryCmd = &cobra.Command{
 			processedValues["appRef"],
 		)
 		log.Debug(fmt.Sprintf("WorkItem: %+v", workItem))
-
-		// TODO: add validation, tse without description is never valid
 
 		targetFilePath := appConfig.File.TargetFilePath
 		sheetName := appConfig.File.TargetSheetName

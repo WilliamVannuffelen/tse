@@ -4,11 +4,10 @@ General:
   logLevel: "debug" # The log level that will be used for the application. Possible values are: "trace", "debug", "info", "warn", "error", "fatal", "panic"
 
 File:
-  # The path to the target file. The file should be in the xlsx format.
+  # The path to the target file. The file should be in xlsx format.
   targetFilePath: "./ebase.xlsx"
   # The name of the sheet in the file that will be used for the upload. If the sheet name is not provided, a sheet with the yyyy-MM-dd format of the first day of this week.
   targetSheetName: ""
-  #TO ADD
   templateSheetName: "Template" # Name of the empty, but formatted sheet used to create new ones
 
 Project:
