@@ -2,7 +2,9 @@ package workitem
 
 import (
 	"fmt"
+	_ "github.com/spf13/viper"
 	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
+	"github.com/williamvannuffelen/tse/config"
 	"time"
 )
 
@@ -61,6 +63,7 @@ type KiaraWorkItem struct {
 }
 
 func NewKiaraWorkItem(
+	appConfig config.Config,
 	date string,
 	description string,
 	jiraRef string,
@@ -76,36 +79,13 @@ func NewKiaraWorkItem(
 		AppRef:      appRef,
 	}
 	//log.Debug("KiaraWorkItem created.")
+	// hardcoded true for setDefaultValue since everyone logically wants a default project
 	kwi.SetDate(date)
-	kwi.SetDefaultValue("JiraRef", "OPS-305", false, jiraRef)
-	kwi.SetDefaultValue("Project", "CS0126444 - Wonen Cloudzone - dedicated operationeel projectteam", true, project)
-	kwi.SetDefaultValue("AppRef", "99999", true, appRef)
+	kwi.SetDefaultValue("JiraRef", appConfig.JiraRef.DefaultValue, appConfig.JiraRef.SetDefaultValue, jiraRef)
+	kwi.SetDefaultValue("Project", appConfig.Project.DefaultProjectName, true, project)
+	kwi.SetDefaultValue("AppRef", appConfig.AppRef.DefaultValue, appConfig.AppRef.SetDefaultValue, appRef)
 	return kwi
 }
 
 func Run() {
-	var date string = ""
-	var description string = "Test work item"
-	var jiraRef string = ""
-	var timeSpent string = "1.0"
-	var project string = ""
-	var appRef string = "Test app ref"
-
-	kwi := NewKiaraWorkItem(
-		date,
-		description,
-		jiraRef,
-		project,
-		appRef,
-		timeSpent,
-	)
-	log.Debug(fmt.Sprintf(
-		"KiaraWorkItem:\nDate: %s\nDescription: %s\nJiraRef: %s\nTimeSpent: %s\nProject: %s\nAppRef: %s",
-		kwi.Date,
-		kwi.Description,
-		kwi.JiraRef,
-		kwi.TimeSpent,
-		kwi.Project,
-		kwi.AppRef,
-	))
 }
