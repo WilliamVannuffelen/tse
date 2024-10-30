@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
 	"github.com/williamvannuffelen/tse/config"
 	"github.com/williamvannuffelen/tse/excel"
@@ -12,8 +11,6 @@ import (
 	"github.com/williamvannuffelen/tse/keywords"
 	"github.com/williamvannuffelen/tse/workitem"
 )
-
-var appConfig config.Config
 
 var log logger.Logger
 
@@ -36,7 +33,7 @@ func MatchAndExtractKeywords(filePath string, keyword string) (map[string]string
 	return keywordValues, nil
 }
 
-func ProcessKeywords(values map[string]string) (map[string]string, error) {
+func ProcessKeywords(appConfig config.Config, values map[string]string) (map[string]string, error) {
 	log.Debug("inside processkw")
 	if values["keyword"] != "" {
 		log.Debug("Keyword provided. Fetching values.")
@@ -57,6 +54,10 @@ func ProcessKeywords(values map[string]string) (map[string]string, error) {
 		values["jira-ref"] = keywordValues["jira-ref"]
 		values["project"] = keywordValues["project"]
 	}
+	// if values["project"] == "" {
+	// 	log.Debug("No project provided. Using default project.")
+	// 	values["project"] = appConfig.Project.DefaultProjectName
+	// }
 	return values, nil
 }
 
@@ -72,7 +73,7 @@ var addTimeSheetEntryCmd = &cobra.Command{
 		if err != nil {
 			log.Warn(err)
 		}
-		SetLogger(log)
+		SetLogger(log) // not redundant: required for funcs inside cmd package, but outside of Run
 		workitem.SetLogger(log)
 		excel.SetLogger(log)
 		keywords.SetLogger(log)
@@ -85,13 +86,16 @@ var addTimeSheetEntryCmd = &cobra.Command{
 			values[flag] = value
 			log.Debug(fmt.Sprintf("%s: %s", flag, value))
 		}
-		processedValues, err := ProcessKeywords(values)
+		processedValues, err := ProcessKeywords(appConfig, values)
 		if err != nil {
 			fmt.Errorf("%s %w", help.NewErrorStackTraceString(fmt.Sprintf("failed to process keyword info")), err)
 		}
 		log.Debug("Processed values: ", processedValues)
 
-		//TODO: error if one of permutations is not reached
+		if processedValues["description"] == "" {
+			log.Error("No description provided. Provide one using -p or use a keyword with -k or -K.")
+			return
+		}
 
 		workItem := CreateKiaraWorkItem(
 			appConfig,
@@ -104,15 +108,14 @@ var addTimeSheetEntryCmd = &cobra.Command{
 		)
 		log.Debug(fmt.Sprintf("WorkItem: %+v", workItem))
 
-		targetFilePath := viper.Get("File.targetFilePath").(string)
+		// TODO: add validation, tse without description is never valid
 
-		sheetName, ok := viper.Get("File.targetSheetName").(string)
-		if !ok || sheetName == "" {
-			log.Debug("No sheet name provided, using current week's sheet name.")
+		targetFilePath := appConfig.File.TargetFilePath
+		sheetName := appConfig.File.TargetSheetName
+		if sheetName == "" {
 			sheetName = excel.GetCurrentWeekSheetName()
 		}
-		log.Debug("sheetName: ", sheetName)
-		templateSheetName := viper.Get("File.templateSheetName").(string)
+		templateSheetName := appConfig.File.TemplateSheetName
 		err = WriteTimeSheetEntry(targetFilePath, sheetName, templateSheetName, workItem)
 		if err != nil {
 			log.Error(err)
@@ -135,8 +138,6 @@ func init() {
 }
 
 func CreateKiaraWorkItem(appConfig config.Config, date string, description string, jiraRef string, time string, project string, appRef string) *workitem.KiaraWorkItem {
-	log.Debug("Project: ", project)
-	log.Debug("default projecT: ", appConfig.Project.DefaultProjectName)
 	workItem := workitem.NewKiaraWorkItem(appConfig, date, description, jiraRef, time, project, appRef)
 	return workItem
 }
