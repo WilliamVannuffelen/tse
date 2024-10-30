@@ -29,6 +29,7 @@ func (kwi *KiaraWorkItem) SetDate(date string) {
 
 func (kwi *KiaraWorkItem) SetDefaultValue(valueType string, defaultValue string, setDefaultValue bool, value string) {
 	if value == "" {
+		log.Debug("value is empty")
 		if setDefaultValue {
 			value = defaultValue
 			log.Debug(fmt.Sprintf("No %s provided and setDefaultValue is true, using default: '%s'", valueType, defaultValue))
@@ -67,9 +68,9 @@ func NewKiaraWorkItem(
 	date string,
 	description string,
 	jiraRef string,
+	timeSpent string,
 	project string,
 	appRef string,
-	timeSpent string,
 ) *KiaraWorkItem {
 	kwi := &KiaraWorkItem{
 		Description: description,
@@ -81,6 +82,7 @@ func NewKiaraWorkItem(
 	//log.Debug("KiaraWorkItem created.")
 	// hardcoded true for setDefaultValue since everyone logically wants a default project
 	kwi.SetDate(date)
+	log.Debug("kkproject is ", project)
 	kwi.SetDefaultValue("JiraRef", appConfig.JiraRef.DefaultValue, appConfig.JiraRef.SetDefaultValue, jiraRef)
 	kwi.SetDefaultValue("Project", appConfig.Project.DefaultProjectName, true, project)
 	kwi.SetDefaultValue("AppRef", appConfig.AppRef.DefaultValue, appConfig.AppRef.SetDefaultValue, appRef)
