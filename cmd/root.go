@@ -8,6 +8,7 @@ import (
 	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
 	"github.com/williamvannuffelen/tse/config"
 	"github.com/williamvannuffelen/tse/excel"
+	"github.com/williamvannuffelen/tse/keywords"
 	"github.com/williamvannuffelen/tse/workitem"
 )
 
@@ -27,8 +28,6 @@ var (
 	}
 )
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() error {
 	return rootCmd.Execute()
 }
@@ -47,6 +46,7 @@ func init() {
 	}
 	workitem.SetLogger(log)
 	excel.SetLogger(log)
+	keywords.SetLogger(log)
 	log.Debug("Logger init done from root.go")
 
 	rootCmd.AddCommand(addTimeSheetEntryCmd)

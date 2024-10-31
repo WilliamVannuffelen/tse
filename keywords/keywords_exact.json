@@ -18,5 +18,10 @@
     "jiraRef": "OPS-2250",
     "project": "CS0126444 - Wonen Cloudzone - dedicated operationeel projectteam",
     "description": "crm infra"
+  },
+  "sapt": {
+    "jiraRef": "OPS-5359",
+    "project": "CS0126444 - Wonen Cloudzone - dedicated operationeel projectteam",
+    "description": "sapepsc infra"
   }
 }
