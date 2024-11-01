@@ -3,48 +3,20 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"strconv"
-	"time"
-	//logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
 	"github.com/williamvannuffelen/tse/config"
 	"github.com/williamvannuffelen/tse/excel"
 	help "github.com/williamvannuffelen/tse/helpers"
 	"github.com/williamvannuffelen/tse/keywords"
 	"github.com/williamvannuffelen/tse/workitem"
+	"strconv"
+	"time"
 )
-
-//var log logger.Logger
-// var err error
-
-// func SetLogger(l logger.Logger) {
-// 	log = l
-// }
-
-func MatchAndExtractKeywords(filePath string, keyword string) (map[string]string, error) {
-	log.Debug("Matching keywords for keyword: ", keyword)
-	kw, err := keywords.MatchKeywords(filePath, keyword)
-	if err != nil {
-		return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString(fmt.Sprintf("failed to get info for provided keyword '%s'", keyword)), err)
-	}
-	keywordValues := map[string]string{
-		"description": kw.Description,
-		"jira-ref":    kw.JiraRef,
-		"project":     kw.Project,
-		"app-ref":     kw.AppRef,
-	}
-	log.Debug(fmt.Sprintf("Got values from keyword: Description: '%s', JiraRef: '%s', Project: '%s', AppRef: '%s'",
-		keywordValues["description"],
-		keywordValues["jira-ref"],
-		keywordValues["project"],
-		keywordValues["app-ref"]))
-	return keywordValues, nil
-}
 
 func ProcessKeywords(appConfig config.Config, values map[string]string) (map[string]string, error) {
 	log.Debug("inside processkw")
 	if values["keyword"] != "" {
 		log.Debug("Keyword provided. Fetching values.")
-		keywordValues, err := MatchAndExtractKeywords("./keywords/keywords_temp.json", values["keyword"])
+		keywordValues, err := keywords.MatchAndExtractKeywords("./keywords/keywords.json", values["keyword"], "addTimeSheetEntry")
 		if err != nil {
 			return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString(fmt.Sprintf("failed to get info for keyword '%s'", values["keyword"])), err)
 		}

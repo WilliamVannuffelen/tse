@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/williamvannuffelen/tse/keywords"
+	//help "github.com/williamvannuffelen/tse/helpers"
 )
 
 // process flags - see if valid combination + valid values
@@ -17,10 +18,9 @@ var addKeywordCmd = &cobra.Command{
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Debug("foo!")
-		fmt.Println(("foo!"))
-
-		flags := []string{"description", "jira-ref", "project", "app-ref", "keyword", "basic-keyword"}
+		//TODO: keywords filepath should be configurable
+		var keywordsFilePath = "./keywords/keywords.json"
+		flags := []string{"description", "jira-ref", "project", "app-ref", "keyword"}
 		values := make(map[string]string)
 		for _, flag := range flags {
 			value, _ := cmd.Flags().GetString(flag)
@@ -31,10 +31,37 @@ var addKeywordCmd = &cobra.Command{
 		err := keywords.ValidateFlags(values)
 		if err != nil {
 			log.Error(err)
+			return
 		}
 		keywords.SetDefaultValues(values)
-
 		log.Debug("Processed values: ", values)
+
+		keywordValues, err := keywords.MatchAndExtractKeywords(keywordsFilePath, values["keyword"], "addKeyword")
+		if err != nil {
+			log.Error(err)
+			return
+		}
+		if keywordValues == nil {
+			log.Debug("No keyword found for: ", values["keyword"])
+			keywordsMap, err := keywords.UnmarshalToKeywords(keywordsFilePath)
+			if err != nil {
+				log.Error(err)
+				return
+			}
+			updatedKeywords, err := keywords.AddNewKeyword(values, keywordsMap)
+			if err != nil {
+				log.Error(err)
+				return
+			}
+			err = keywords.WriteKeywordsToFile(keywordsFilePath, updatedKeywords)
+			if err != nil {
+				log.Error(err)
+				return
+			}
+		}
+		// invoke function to updae keyword values
+
+		log.Debug("Keyword values: ", keywordValues)
 	},
 }
 
@@ -46,5 +73,4 @@ func init() {
 	addKeywordCmd.Flags().StringP("description", "d", "", "Description of the timesheet entry.")
 	addKeywordCmd.Flags().StringP("app-ref", "a", "", "App reference of the timesheet entry. Will default to the value set in config.yaml if setting default is not disabled.")
 	addKeywordCmd.Flags().StringP("keyword", "k", "", "Keyword of the timesheet entry. Used to source full description, project, jira-ref and app-ref for known tasks.")
-	addKeywordCmd.Flags().StringP("basic-keyword", "K", "", "Basic keyword of the timesheet entry. Used to source, project, jira-ref and app-ref for known tasks.")
 }

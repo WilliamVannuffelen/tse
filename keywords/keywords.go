@@ -11,10 +11,10 @@ import (
 )
 
 type Keyword struct {
-	JiraRef     string `json:"jiraRef"`
-	Project     string `json:"project"`
-	Description string `json:"description"`
-	AppRef      string `json:"appRef"`
+	JiraRef     string `json:"jiraRef,omitempty"`
+	Project     string `json:"project,omitempty"`
+	Description string `json:"description,omitempty"`
+	AppRef      string `json:"appRef,omitempty"`
 }
 
 func OpenKeywordsFile(fileName string) (*os.File, error) {
@@ -35,9 +35,10 @@ func ReadFileBytes(file *os.File) ([]byte, error) {
 	return byteValue, nil
 }
 
-func UnmarshalJson(byteValue []byte) (map[string]json.RawMessage, error) {
+// func UnmarshalJson(byteValue []byte) (map[string]json.RawMessage, error) {
+func UnmarshalJson(byteValue []byte) (map[string]Keyword, error) {
 	log.Debug("Unmarshalling json.")
-	keywords := make(map[string]json.RawMessage)
+	keywords := make(map[string]Keyword) //make(map[string]json.RawMessage)
 	err := json.Unmarshal(byteValue, &keywords)
 	if len(keywords) == 0 {
 		return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to unmarshal bytearray to json"), err)
@@ -45,7 +46,8 @@ func UnmarshalJson(byteValue []byte) (map[string]json.RawMessage, error) {
 	return keywords, nil
 }
 
-func UnmarshalToKeywords(fileName string) (map[string]json.RawMessage, error) {
+// func UnmarshalToKeywords(fileName string) (map[string]json.RawMessage, error) {
+func UnmarshalToKeywords(fileName string) (map[string]Keyword, error) {
 	errorMessage := "failed to unmarshal keywords"
 	file, err := OpenKeywordsFile(fileName)
 	if err != nil {
