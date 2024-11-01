@@ -1,6 +1,6 @@
 General:
-  debugEnabled: true # if true, debug messages will be shown during init. Different from log level
-  silenceConfigWarnings: false # if true, no warnings will be shown for missing or incorrect configuration values
+  debugEnabled: false # if true, debug messages will be shown during init. Different from log level
+  silenceConfigWarnings: true # if true, no warnings will be shown for missing or incorrect configuration values
   logLevel: "debug" # The log level that will be used for the application. Possible values are: "trace", "debug", "info", "warn", "error", "fatal", "panic"
 
 File:
@@ -11,7 +11,7 @@ File:
   templateSheetName: "Template" # Name of the empty, but formatted sheet used to create new ones
 
 Project:
-  # The default project name that will be used for the upload.
+  # The default project name that will be used for the upload or keyword creation.
   defaultProjectName: "CS0126444 - Wonen Cloudzone - dedicated operationeel projectteam"
 
 JiraRef:
@@ -19,9 +19,11 @@ JiraRef:
   defaultValue: "OPS-305"
   # Whether the default value should be set for the Jira reference field.
   setDefaultValue: true
+  setDefaultValueForNewKeywords: true
 
 AppRef:
   # The default value for the Application reference field.
   defaultValue: ""
   # Whether the default value should be set for the Application reference field.
   setDefaultValue: false
+  setDefaultValueForNewKeywords: false

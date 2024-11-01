@@ -1,10 +1,36 @@
 {
+  "t": {
+    "jiraRef": "OPS-305",
+    "project": "CS0126444 - Wonen Cloudzone - dedicated operationeel projectteam",
+    "description": "team meeting"
+  },
+  "s": {
+    "jiraRef": "OPS-305",
+    "project": "CS0126444 - Wonen Cloudzone - dedicated operationeel projectteam",
+    "description": "standup"
+  },
   "crmt": {
-    "jiraRef": "OPS-1234",
-    "project": "Wonen whatever project"
+    "jiraRef": "OPS-2250",
+    "project": "CS0126444 - Wonen Cloudzone - dedicated operationeel projectteam",
+    "description": "crm infra"
   },
   "crmp": {
-    "jiraRef": "OPS-3456",
-    "project": "Wonen whatever project"
+    "jiraRef": "OPS-2250",
+    "project": "CS0126444 - Wonen Cloudzone - dedicated operationeel projectteam",
+    "description": "crm infra"
+  },
+  "sapt": {
+    "jiraRef": "OPS-5359",
+    "project": "CS0126444 - Wonen Cloudzone - dedicated operationeel projectteam",
+    "description": "sapepsc infra"
+  },
+  "foo": {
+    "jiraRef": "OPS-1234",
+    "project": "CS0123456 - Foo Bar"
+  },
+  "bar": {
+    "jiraRef": "OPS-5678",
+    "project": "CS0123456 - Foo Bar",
+    "appRef": "3512"
   }
 }
