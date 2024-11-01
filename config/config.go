@@ -54,7 +54,7 @@ func InitConfig() Config {
 	if cfgFile != "" {
 		viper.SetConfigFile(cfgFile)
 	} else {
-		viper.AddConfigPath("../config")
+		viper.AddConfigPath("config")
 		viper.SetConfigType("yaml")
 		viper.SetConfigName("config")
 	}

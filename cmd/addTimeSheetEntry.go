@@ -78,6 +78,7 @@ func ValidateInputValues(processedValues map[string]string) error {
 			return fmt.Errorf("invalid time format. Please use a number. e.g. 8")
 		}
 	}
+	// other values are optional
 	return nil
 }
 
@@ -104,10 +105,6 @@ var addTimeSheetEntryCmd = &cobra.Command{
 		}
 		log.Debug("Processed values: ", processedValues)
 
-		// if processedValues["description"] == "" {
-		// 	log.Error("No description provided. Provide one using -d or use a keyword with -k or -K.")
-		// 	return
-		// }
 		err = ValidateInputValues(processedValues)
 		if err != nil {
 			log.Error(fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to validate provided input values"), err))
