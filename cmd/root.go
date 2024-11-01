@@ -2,15 +2,22 @@ package cmd
 
 import (
 	"fmt"
+
 	"github.com/spf13/cobra"
-	//logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
 	"github.com/spf13/viper"
-	_ "github.com/williamvannuffelen/tse/config"
+	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
+	"github.com/williamvannuffelen/tse/config"
+	"github.com/williamvannuffelen/tse/excel"
+	"github.com/williamvannuffelen/tse/keywords"
+	"github.com/williamvannuffelen/tse/workitem"
 )
 
 var (
-	cfgFile string
-	rootCmd = &cobra.Command{
+	cfgFile   string
+	appConfig config.Config
+	log       logger.Logger
+	err       error
+	rootCmd   = &cobra.Command{
 		Use:           "tse",
 		Short:         "Time Sheet Entry",
 		Long:          "Time Sheet Entry is a CLI tool to manage time sheet entries.",
@@ -21,8 +28,6 @@ var (
 	}
 )
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() error {
 	return rootCmd.Execute()
 }
@@ -34,7 +39,18 @@ func init() {
 	rootCmd.PersistentFlags().String("debug", "d", "Enable debug logging")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./config/config.yaml)")
 
+	appConfig = config.InitConfig()
+	log, err = logger.InitLogger("log.txt", appConfig.General.LogLevel) // TODO: add log path to config
+	if err != nil {
+		log.Warn(err)
+	}
+	workitem.SetLogger(log)
+	excel.SetLogger(log)
+	keywords.SetLogger(log)
+	log.Debug("Logger init done from root.go")
+
 	rootCmd.AddCommand(addTimeSheetEntryCmd)
+	rootCmd.AddCommand(addKeywordCmd)
 	fmt.Println("no errors yet")
 }
 
@@ -43,7 +59,6 @@ func initConfig() {
 		viper.SetConfigFile(cfgFile)
 	} else {
 
-		// Search config in home directory with name ".cobra" (without extension).
 		viper.AddConfigPath("./config/config.yaml")
 		viper.SetConfigType("yaml")
 		viper.SetConfigName("config")

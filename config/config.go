@@ -32,13 +32,15 @@ type ProjectConfig struct {
 }
 
 type JiraRefConfig struct {
-	DefaultValue    string `mapstructure:"defaultValue"`
-	SetDefaultValue bool   `mapstructure:"setDefaultValue"`
+	DefaultValue                  string `mapstructure:"defaultValue"`
+	SetDefaultValue               bool   `mapstructure:"setDefaultValue"`
+	SetDefaultValueForNewKeywords bool   `mapstructure:"setDefaultValueForNewKeywords"`
 }
 
 type AppRefConfig struct {
-	DefaultValue    string `mapstructure:"defaultValue"`
-	SetDefaultValue bool   `mapstructure:"setDefaultValue"`
+	DefaultValue                  string `mapstructure:"defaultValue"`
+	SetDefaultValue               bool   `mapstructure:"setDefaultValue"`
+	SetDefaultValueForNewKeywords bool   `mapstructure:"setDefaultValueForNewKeywords"`
 }
 
 var cfgFile string

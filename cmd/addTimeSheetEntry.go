@@ -2,63 +2,56 @@ package cmd
 
 import (
 	"fmt"
-
 	"github.com/spf13/cobra"
-	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
 	"github.com/williamvannuffelen/tse/config"
 	"github.com/williamvannuffelen/tse/excel"
 	help "github.com/williamvannuffelen/tse/helpers"
 	"github.com/williamvannuffelen/tse/keywords"
 	"github.com/williamvannuffelen/tse/workitem"
+	"strconv"
+	"time"
 )
-
-var log logger.Logger
-
-func SetLogger(l logger.Logger) {
-	log = l
-}
-
-func MatchAndExtractKeywords(filePath string, keyword string) (map[string]string, error) {
-	log.Debug("Matching keywords for keyword: ", keyword)
-	kw, err := keywords.MatchKeywords(filePath, keyword)
-	if err != nil {
-		return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString(fmt.Sprintf("failed to get info for provided keyword '%s'", keyword)), err)
-	}
-	keywordValues := map[string]string{
-		"description": kw.Description,
-		"jira-ref":    kw.JiraRef,
-		"project":     kw.Project,
-	}
-	log.Debug("Got values from keyword: ", keywordValues["description"], keywordValues["jiraRef"], keywordValues["project"])
-	return keywordValues, nil
-}
 
 func ProcessKeywords(appConfig config.Config, values map[string]string) (map[string]string, error) {
 	log.Debug("inside processkw")
 	if values["keyword"] != "" {
 		log.Debug("Keyword provided. Fetching values.")
-		keywordValues, err := MatchAndExtractKeywords("./keywords/keywords_exact.json", values["keyword"])
+		keywordValues, err := keywords.MatchAndExtractKeywords("./keywords/keywords.json", values["keyword"], "addTimeSheetEntry")
 		if err != nil {
 			return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString(fmt.Sprintf("failed to get info for keyword '%s'", values["keyword"])), err)
 		}
-		values["description"] = keywordValues["description"]
-		values["jira-ref"] = keywordValues["jira-ref"]
-		values["project"] = keywordValues["project"]
-	}
-	if values["basic-keyword"] != "" {
-		log.Debug("Basic keyword provided. Fetching values.")
-		keywordValues, err := MatchAndExtractKeywords("./keywords/keywords.json", values["basic-keyword"])
-		if err != nil {
-			return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString(fmt.Sprintf("failed to get info for keyword '%s'", values["basic-keyword"])), err)
+
+		// if flag was empty for property, use value from keyword
+		for _, key := range []string{"description", "jira-ref", "project", "app-ref"} {
+			if values[key] == "" {
+				values[key] = keywordValues[key]
+			}
 		}
-		values["jira-ref"] = keywordValues["jira-ref"]
-		values["project"] = keywordValues["project"]
 	}
-	// if values["project"] == "" {
-	// 	log.Debug("No project provided. Using default project.")
-	// 	values["project"] = appConfig.Project.DefaultProjectName
-	// }
 	return values, nil
+}
+
+func ValidateInputValues(processedValues map[string]string) error {
+	if processedValues["description"] == "" {
+		return fmt.Errorf("no description provided. Provide one using -d or use a keyword with -k or -K")
+	}
+	if processedValues["date"] != "" {
+		_, err := time.Parse("2006-01-02", processedValues["date"])
+		if err != nil {
+			return fmt.Errorf("invalid date format. Please use yyyy-MM-dd. e.g. 2024-09-31")
+		}
+	}
+	if processedValues["time"] == "" {
+		return fmt.Errorf("no time provided. Provide one using -t")
+	}
+	if processedValues["time"] != "" {
+		_, err := strconv.ParseFloat(processedValues["time"], 64)
+		if err != nil {
+			return fmt.Errorf("invalid time format. Please use a number. e.g. 8")
+		}
+	}
+	// other values are optional
+	return nil
 }
 
 var addTimeSheetEntryCmd = &cobra.Command{
@@ -68,49 +61,39 @@ var addTimeSheetEntryCmd = &cobra.Command{
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	Run: func(cmd *cobra.Command, args []string) {
-		appConfig := config.InitConfig()
-		log, err := logger.InitLogger("log.txt", appConfig.General.LogLevel)
-		if err != nil {
-			log.Warn(err)
-		}
-		SetLogger(log) // not redundant: required for funcs inside cmd package, but outside of Run
-		workitem.SetLogger(log)
-		excel.SetLogger(log)
-		keywords.SetLogger(log)
-
-		// TODO: Add validation for date fmt = yyyy-MM-dd
-		// TODO: add validation for time fmt: 1 or 1.5 - not 1,5
 		log.Debug("processing flags")
-		flags := []string{"date", "description", "jira-ref", "time", "project", "app-ref", "keyword", "basic-keyword"}
+		flags := []string{"date", "description", "jira-ref", "time", "project", "app-ref", "keyword"}
 		values := make(map[string]string)
 		for _, flag := range flags {
 			value, _ := cmd.Flags().GetString(flag)
 			values[flag] = value
 			log.Debug(fmt.Sprintf("%s: %s", flag, value))
 		}
+		log.Debug("Processing values")
 		processedValues, err := ProcessKeywords(appConfig, values)
 		if err != nil {
-			fmt.Errorf("%s %w", help.NewErrorStackTraceString(fmt.Sprintf("failed to process keyword info")), err)
+			log.Error(fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to process keyword info"), err))
+			return
 		}
 		log.Debug("Processed values: ", processedValues)
 
-		if processedValues["description"] == "" {
-			log.Error("No description provided. Provide one using -d or use a keyword with -k or -K.")
+		err = ValidateInputValues(processedValues)
+		if err != nil {
+			log.Error(fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to validate provided input values"), err))
 			return
 		}
+		log.Debug("Input values validated.")
 
 		workItem := CreateKiaraWorkItem(
 			appConfig,
 			processedValues["date"],
 			processedValues["description"],
-			processedValues["jiraRef"],
+			processedValues["jira-ref"],
 			processedValues["time"],
 			processedValues["project"],
-			processedValues["appRef"],
+			processedValues["app-ref"],
 		)
 		log.Debug(fmt.Sprintf("WorkItem: %+v", workItem))
-
-		// TODO: add validation, tse without description is never valid
 
 		targetFilePath := appConfig.File.TargetFilePath
 		sheetName := appConfig.File.TargetSheetName
@@ -135,7 +118,6 @@ func init() {
 	addTimeSheetEntryCmd.Flags().StringP("project", "p", "", "Project of the timesheet entry. Will default to the value set in config.yaml")
 	addTimeSheetEntryCmd.Flags().StringP("app-ref", "a", "", "App reference of the timesheet entry. Will default to the value set in config.yaml")
 	addTimeSheetEntryCmd.Flags().StringP("keyword", "k", "", "Keyword of the timesheet entry. Used to source full description, project, jira-ref and app-ref for known tasks.")
-	addTimeSheetEntryCmd.Flags().StringP("basic-keyword", "K", "", "Basic keyword of the timesheet entry. Used to source, project, jira-ref and app-ref for known tasks.")
 	addTimeSheetEntryCmd.Flags().StringP("sheet", "s", "", "Sheet name to write the timesheet entry to. Will default to the current week's sheet name.")
 }
 

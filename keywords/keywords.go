@@ -10,15 +10,11 @@ import (
 	help "github.com/williamvannuffelen/tse/helpers"
 )
 
-type BasicKeyword struct {
-	JiraRef string `json:"jiraRef"`
-	Project string `json:"project"`
-}
-
-type FullKeyword struct {
-	JiraRef     string `json:"jiraRef"`
-	Project     string `json:"project"`
-	Description string `json:"description"`
+type Keyword struct {
+	JiraRef     string `json:"jiraRef,omitempty"`
+	Project     string `json:"project,omitempty"`
+	Description string `json:"description,omitempty"`
+	AppRef      string `json:"appRef,omitempty"`
 }
 
 func OpenKeywordsFile(fileName string) (*os.File, error) {
@@ -39,18 +35,19 @@ func ReadFileBytes(file *os.File) ([]byte, error) {
 	return byteValue, nil
 }
 
-func UnmarshalJson(byteValue []byte) (map[string]json.RawMessage, error) {
+// func UnmarshalJson(byteValue []byte) (map[string]json.RawMessage, error) {
+func UnmarshalJson(byteValue []byte) (map[string]Keyword, error) {
 	log.Debug("Unmarshalling json.")
-	var keywords map[string]json.RawMessage
+	keywords := make(map[string]Keyword) //make(map[string]json.RawMessage)
 	err := json.Unmarshal(byteValue, &keywords)
-	log.Debug("Finished unmarshaling")
-	if err != nil {
+	if len(keywords) == 0 {
 		return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to unmarshal bytearray to json"), err)
 	}
 	return keywords, nil
 }
 
-func UnmarshalToKeywords(fileName string) (map[string]json.RawMessage, error) {
+// func UnmarshalToKeywords(fileName string) (map[string]json.RawMessage, error) {
+func UnmarshalToKeywords(fileName string) (map[string]Keyword, error) {
 	errorMessage := "failed to unmarshal keywords"
 	file, err := OpenKeywordsFile(fileName)
 	if err != nil {
@@ -63,9 +60,9 @@ func UnmarshalToKeywords(fileName string) (map[string]json.RawMessage, error) {
 		return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString(errorMessage), err)
 	}
 	keywords, err := UnmarshalJson(byteValue)
-	log.Debug("Done unmarshalling keywords")
 	if err != nil {
 		return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString(errorMessage), err)
 	}
+	log.Debug("Done unmarshalling keywords")
 	return keywords, nil
 }
