@@ -5,11 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/williamvannuffelen/tse/keywords"
-	//help "github.com/williamvannuffelen/tse/helpers"
 )
-
-// process flags - see if valid combination + valid values
-// if valid, append to correct json file
 
 var addKeywordCmd = &cobra.Command{
 	Use:           "addKeyword",
@@ -20,48 +16,35 @@ var addKeywordCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		//TODO: keywords filepath should be configurable
 		var keywordsFilePath = "./keywords/keywords.json"
-		flags := []string{"description", "jira-ref", "project", "app-ref", "keyword"}
-		values := make(map[string]string)
-		for _, flag := range flags {
-			value, _ := cmd.Flags().GetString(flag)
-			values[flag] = value
-			log.Debug(fmt.Sprintf("%s: %s", flag, value))
-		}
-
-		err := keywords.ValidateFlags(values)
-		if err != nil {
+		values := getFlagValues(cmd)
+		if err := validateAndSetDefaults(values); err != nil {
 			log.Error(err)
 			return
 		}
-		keywords.SetDefaultValues(values)
-		log.Debug("Processed values: ", values)
 
 		keywordValues, err := keywords.MatchAndExtractKeywords(keywordsFilePath, values["keyword"], "addKeyword")
 		if err != nil {
 			log.Error(err)
 			return
 		}
+
+		keywordsMap, err := keywords.UnmarshalToKeywords(keywordsFilePath)
+		if err != nil {
+			log.Error(err)
+			return
+		}
+
 		if keywordValues == nil {
 			log.Debug("No keyword found for: ", values["keyword"])
-			keywordsMap, err := keywords.UnmarshalToKeywords(keywordsFilePath)
-			if err != nil {
+			if err := addNewKeyword(values, keywordsMap, keywordsFilePath); err != nil {
 				log.Error(err)
-				return
 			}
-			updatedKeywords, err := keywords.AddNewKeyword(values, keywordsMap)
-			if err != nil {
+		} else {
+			log.Debug("Existing keyword found for: ", values["keyword"])
+			if err := updateExistingKeyword(values, keywordsMap, keywordsFilePath); err != nil {
 				log.Error(err)
-				return
-			}
-			err = keywords.WriteKeywordsToFile(keywordsFilePath, updatedKeywords)
-			if err != nil {
-				log.Error(err)
-				return
 			}
 		}
-		// invoke function to updae keyword values
-
-		log.Debug("Keyword values: ", keywordValues)
 	},
 }
 
@@ -73,4 +56,48 @@ func init() {
 	addKeywordCmd.Flags().StringP("description", "d", "", "Description of the timesheet entry.")
 	addKeywordCmd.Flags().StringP("app-ref", "a", "", "App reference of the timesheet entry. Will default to the value set in config.yaml if setting default is not disabled.")
 	addKeywordCmd.Flags().StringP("keyword", "k", "", "Keyword of the timesheet entry. Used to source full description, project, jira-ref and app-ref for known tasks.")
+}
+
+func getFlagValues(cmd *cobra.Command) map[string]string {
+	flags := []string{"description", "jira-ref", "project", "app-ref", "keyword"}
+	values := make(map[string]string)
+	for _, flag := range flags {
+		value, _ := cmd.Flags().GetString(flag)
+		values[flag] = value
+		log.Debug(fmt.Sprintf("%s: %s", flag, value))
+	}
+	return values
+}
+
+func validateAndSetDefaults(values map[string]string) error {
+	if err := keywords.ValidateFlags(values); err != nil {
+		return err
+	}
+	keywords.SetDefaultValues(values)
+	log.Debug("Processed values: ", values)
+	return nil
+}
+
+func addNewKeyword(values map[string]string, keywordsMap map[string]keywords.Keyword, keywordsFilePath string) error {
+	updatedKeywords, err := keywords.AddNewKeyword(values, keywordsMap)
+	if err != nil {
+		return err
+	}
+	if err := keywords.WriteKeywordsToFile(keywordsFilePath, updatedKeywords); err != nil {
+		return err
+	}
+	log.Info("Added keyword: ", values["keyword"])
+	return nil
+}
+
+func updateExistingKeyword(values map[string]string, keywordsMap map[string]keywords.Keyword, keywordsFilePath string) error {
+	updatedKeywords, err := keywords.UpdateKeyword(values, keywordsMap)
+	if err != nil {
+		return err
+	}
+	if err := keywords.WriteKeywordsToFile(keywordsFilePath, updatedKeywords); err != nil {
+		return err
+	}
+	log.Info("Updated keyword: ", values["keyword"])
+	return nil
 }

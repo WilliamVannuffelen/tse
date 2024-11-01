@@ -70,6 +70,36 @@ func AddNewKeyword(values map[string]string, keywordsMap map[string]Keyword) ([]
 	return updatedKeywords, nil
 }
 
+func UpdateKeyword(values map[string]string, keywordsMap map[string]Keyword) ([]byte, error) {
+	keywordKey := values["keyword"]
+	keyword := keywordsMap[keywordKey]
+	if description, ok := values["description"]; ok {
+		keyword.Description = description
+	}
+	if jiraRef, ok := values["jira-ref"]; ok {
+		keyword.JiraRef = jiraRef
+	}
+	if project, ok := values["project"]; ok {
+		keyword.Project = project
+	}
+	if appRef, ok := values["app-ref"]; ok {
+		keyword.AppRef = appRef
+	}
+
+	keywordsMap[keywordKey] = keyword
+	updatedKeywords, err := json.MarshalIndent(keywordsMap, "", "  ")
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal keywords map: %w", err)
+	}
+	// var updatedKwMap map[string]Keyword
+	// err = json.Unmarshal(updatedKeywords, &updatedKwMap)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to unmarshal json to keyword map"), err)
+	// }
+	// log.Debug("Unmarshalled updated keywords: ", updatedKwMap)
+	return updatedKeywords, nil
+}
+
 func WriteKeywordsToFile(keywordsFilePath string, updatedKeywords []byte) error {
 	file, err := os.OpenFile(keywordsFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
