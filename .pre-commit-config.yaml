@@ -11,4 +11,12 @@ repos:
     hooks:
       - id: go-fmt
       - id: go-vet
-      - id: go-unit-tests
+
+-   repo: local
+    hooks:
+    -   id: go-unit-tests
+        name: go unit tests
+        entry: bash -c 'set -e; FILES=$(go list ./... | grep -v /vendor/); go test -tags=unit -timeout 30s -short -v ${FILES}'
+        pass_filenames: false
+        types: [go]
+        language: system

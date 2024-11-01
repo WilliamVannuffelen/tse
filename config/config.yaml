@@ -1,6 +1,6 @@
 General:
-  debugEnabled: true # if true, debug messages will be shown during init. Different from log level
-  silenceConfigWarnings: false # if true, no warnings will be shown for missing or incorrect configuration values
+  debugEnabled: false # if true, debug messages will be shown during init. Different from log level
+  silenceConfigWarnings: true # if true, no warnings will be shown for missing or incorrect configuration values
   logLevel: "debug" # The log level that will be used for the application. Possible values are: "trace", "debug", "info", "warn", "error", "fatal", "panic"
 
 File:

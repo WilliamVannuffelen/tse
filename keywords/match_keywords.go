@@ -14,33 +14,31 @@ func SetLogger(l logger.Logger) {
 	log = l
 }
 
-func MatchParamToKeywords(keywords map[string]json.RawMessage, param string) (FullKeyword, error) {
+func MatchParamToKeywords(keywords map[string]json.RawMessage, param string) (Keyword, error) {
 	if keyword, exists := keywords[param]; exists {
-		var kw FullKeyword
+		var kw Keyword
 		err := json.Unmarshal(keyword, &kw)
 		if err != nil {
-			return FullKeyword{}, fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to unmarshal json to keyword struct"), err)
+			return Keyword{}, fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to unmarshal json to keyword struct"), err)
 		}
-		log.Debug("Unmarshalled keyword: ", kw)
 		return kw, nil
 	}
-	return FullKeyword{}, nil
+	return Keyword{}, nil
 }
 
-func MatchKeywords(fileName string, param string) (FullKeyword, error) {
+func MatchKeywords(fileName string, param string) (Keyword, error) {
 	errorMessage := "failed to match keywords"
 	keywords, err := UnmarshalToKeywords(fileName)
 	if err != nil {
-		return FullKeyword{}, fmt.Errorf("%s %w", help.NewErrorStackTraceString(errorMessage), err)
+		return Keyword{}, fmt.Errorf("%s %w", help.NewErrorStackTraceString(errorMessage), err)
 	}
-	log.Debug("Starting MatchParamtoKeywords")
 	matchedKeyword, err := MatchParamToKeywords(keywords, param)
 	if err != nil {
-		return FullKeyword{}, fmt.Errorf("%s %w", help.NewErrorStackTraceString(errorMessage), err)
+		return Keyword{}, fmt.Errorf("%s %w", help.NewErrorStackTraceString(errorMessage), err)
 	}
-	if matchedKeyword == (FullKeyword{}) {
-		return FullKeyword{}, fmt.Errorf("%s %w", help.NewErrorStackTraceString(errorMessage), fmt.Errorf("keyword not found '%s'", param))
+	if matchedKeyword == (Keyword{}) {
+		return Keyword{}, fmt.Errorf("%s %w", help.NewErrorStackTraceString(errorMessage), fmt.Errorf("keyword not found '%s'", param))
 	}
-	log.Debug("Matched keyword: ", matchedKeyword)
+	log.Debug("Found match for keyword: ", param)
 	return matchedKeyword, nil
 }
