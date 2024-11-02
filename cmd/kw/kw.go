@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/williamvannuffelen/tse/cmd/kw/add"
 	"github.com/williamvannuffelen/tse/cmd/kw/list"
+	"github.com/williamvannuffelen/tse/cmd/kw/show"
 	//"github.com/williamvannuffelen/tse/cmd"
 	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
 	_ "github.com/williamvannuffelen/tse/config"
@@ -30,4 +31,5 @@ var KwCmd = &cobra.Command{
 func init() {
 	KwCmd.AddCommand(kwlist.ListCmd)
 	KwCmd.AddCommand(kwadd.AddKeywordCmd)
+	KwCmd.AddCommand(kwshow.ShowCmd)
 }
