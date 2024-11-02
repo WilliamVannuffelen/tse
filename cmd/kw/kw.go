@@ -16,6 +16,7 @@ func SetLogger(l logger.Logger) {
 
 var KwCmd = &cobra.Command{
 	Use:           "kw",
+	Aliases:       []string{"keyword"},
 	Short:         "Keyword commands",
 	Long:          "Used for keyword commands such as 'kw list'.",
 	SilenceUsage:  true,
