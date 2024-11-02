@@ -9,7 +9,7 @@ CLI tool to generate timesheet entries in an excel file, sourcing from global or
 There are three ways to pass values for the target timesheet entry:
 
 - global defaults from the config file. default path: `./config/config.yaml`
-- defaults sourced by keyword matching. default path `./keywords/keywords.json`
+- values sourced by keyword matching. default path `./keywords/keywords.json`
 - commandline flags
 
 These are overridden in reverse order. I.e. a commandline value will override a keyword value which will override a global default value.
