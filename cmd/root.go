@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/viper"
 	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
 	"github.com/williamvannuffelen/tse/cmd/kw"
+	"github.com/williamvannuffelen/tse/cmd/kw/add"
 	"github.com/williamvannuffelen/tse/cmd/kw/list"
 	"github.com/williamvannuffelen/tse/config"
 	"github.com/williamvannuffelen/tse/excel"
@@ -51,10 +52,10 @@ func init() {
 	keywords.SetLogger(log)
 	kw.SetLogger(log)
 	kwlist.SetLogger(log)
+	kwadd.SetLogger(log)
 	log.Debug("Logger init done from root.go")
 
 	rootCmd.AddCommand(addTimeSheetEntryCmd)
-	rootCmd.AddCommand(addKeywordCmd)
 	rootCmd.AddCommand(kw.KwCmd)
 	fmt.Println("no errors yet")
 }
