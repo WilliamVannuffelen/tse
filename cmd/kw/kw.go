@@ -6,6 +6,7 @@ import (
 	"github.com/williamvannuffelen/tse/cmd/kw/list"
 	//"github.com/williamvannuffelen/tse/cmd"
 	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
+	_ "github.com/williamvannuffelen/tse/config"
 )
 
 var log logger.Logger

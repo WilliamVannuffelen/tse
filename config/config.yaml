@@ -34,3 +34,7 @@ AppRef:
   setDefaultValue: false
   # Whether the default value should be set for the Application reference field when creating new keywords.
   setDefaultValueForNewKeywords: false
+
+Keywords:
+  # Default output type: json or pp (pretty print)
+  defaultOutputFormat: "json"
