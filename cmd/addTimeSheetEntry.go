@@ -32,6 +32,7 @@ func ProcessKeywords(appConfig config.Config, values map[string]string) (map[str
 }
 
 func ValidateInputValues(processedValues map[string]string) error {
+	log.Debug("Validating input")
 	if processedValues["description"] == "" {
 		return fmt.Errorf("no description provided. Provide one using -d or use a keyword with -k or -K")
 	}
@@ -48,6 +49,9 @@ func ValidateInputValues(processedValues map[string]string) error {
 		_, err := strconv.ParseFloat(processedValues["time"], 64)
 		if err != nil {
 			return fmt.Errorf("invalid time format. Please use a number. e.g. 8")
+		}
+		if processedValues["time"] == "0" {
+			return fmt.Errorf("time spent cannot be 0. Please provide a valid time with flag -t")
 		}
 	}
 	// other values are optional
