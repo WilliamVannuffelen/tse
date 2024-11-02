@@ -29,15 +29,15 @@ func TestValidateInputValues(t *testing.T) {
 			input: map[string]string{
 				"description": "Work on project",
 				"date":        "2023-10-01",
-				"time":        "8",
+				"timespent":   "8",
 			},
 			expectedError: "",
 		},
 		{
 			name: "Missing description",
 			input: map[string]string{
-				"date": "2023-10-01",
-				"time": "8",
+				"date":      "2023-10-01",
+				"timespent": "8",
 			},
 			expectedError: "no description provided. Provide one using -d or use a keyword with -k or -K",
 		},
@@ -46,7 +46,7 @@ func TestValidateInputValues(t *testing.T) {
 			input: map[string]string{
 				"description": "Work on project",
 				"date":        "01-10-2023",
-				"time":        "8",
+				"timespent":   "8",
 			},
 			expectedError: "invalid date format. Please use yyyy-MM-dd. e.g. 2024-09-31",
 		},
@@ -56,16 +56,16 @@ func TestValidateInputValues(t *testing.T) {
 				"description": "Work on project",
 				"date":        "2023-10-01",
 			},
-			expectedError: "no time provided. Provide one using -t",
+			expectedError: "no timespent provided. Provide one using -t",
 		},
 		{
 			name: "Invalid time format",
 			input: map[string]string{
 				"description": "Work on project",
 				"date":        "2023-10-01",
-				"time":        "8h",
+				"timespent":   "8h",
 			},
-			expectedError: "invalid time format. Please use a number. e.g. 8",
+			expectedError: "invalid timespent format. Please use a number. e.g. 8",
 		},
 	}
 

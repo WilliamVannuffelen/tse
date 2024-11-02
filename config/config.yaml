@@ -1,17 +1,22 @@
 General:
-  debugEnabled: false # if true, debug messages will be shown during init. Different from log level
-  silenceConfigWarnings: true # if true, no warnings will be shown for missing or incorrect configuration values
-  logLevel: "debug" # The log level that will be used for the application. Possible values are: "trace", "debug", "info", "warn", "error", "fatal", "panic"
+  # if true, debug messages will be shown during init. Different from log level. Leave on false unless you're experiencing issues.
+  debugEnabled: false
+  # if true, no warnings will be shown for missing or incorrect configuration values. Set it to false to see warnings.
+  silenceConfigWarnings: true
+  # The log level that will be used for the application. Possible values are: "trace", "debug", "info", "warn", "error", "fatal", "panic"
+  # Default value is "info". Set it to "debug" for verbose output if you're having issues.
+  logLevel: "info"
 
 File:
   # The path to the target file. The file should be in xlsx format.
   targetFilePath: "./ebase.xlsx"
-  # The name of the sheet in the file that will be used for the upload. If the sheet name is not provided, a sheet with the yyyy-MM-dd format of the first day of this week.
+  # The name of the sheet in the file that will be used. If the sheet name is not provided, a sheet with the yyyy-MM-dd format of the first day of this week.
   targetSheetName: ""
-  templateSheetName: "Template" # Name of the empty, but formatted sheet used to create new ones
+  # Name of the empty, but formatted sheet used to create new ones. If empty, the first sheet in the target file will be used.
+  templateSheetName: "Template"
 
 Project:
-  # The default project name that will be used for the upload or keyword creation.
+  # The default project name that will be used for timesheet entry or keyword creation.
   defaultProjectName: "CS0126444 - Wonen Cloudzone - dedicated operationeel projectteam"
 
 JiraRef:
@@ -19,6 +24,7 @@ JiraRef:
   defaultValue: "OPS-305"
   # Whether the default value should be set for the Jira reference field.
   setDefaultValue: true
+  # Whether the default value should be set for the Jira reference field when creating new keywords.
   setDefaultValueForNewKeywords: true
 
 AppRef:
@@ -26,4 +32,5 @@ AppRef:
   defaultValue: ""
   # Whether the default value should be set for the Application reference field.
   setDefaultValue: false
+  # Whether the default value should be set for the Application reference field when creating new keywords.
   setDefaultValueForNewKeywords: false

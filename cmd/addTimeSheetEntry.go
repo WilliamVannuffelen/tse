@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 	"github.com/williamvannuffelen/tse/config"
 	"github.com/williamvannuffelen/tse/excel"
@@ -42,16 +43,16 @@ func ValidateInputValues(processedValues map[string]string) error {
 			return fmt.Errorf("invalid date format. Please use yyyy-MM-dd. e.g. 2024-09-31")
 		}
 	}
-	if processedValues["time"] == "" {
-		return fmt.Errorf("no time provided. Provide one using -t")
+	if processedValues["timespent"] == "" {
+		return fmt.Errorf("no timespent provided. Provide one using -t")
 	}
-	if processedValues["time"] != "" {
-		_, err := strconv.ParseFloat(processedValues["time"], 64)
+	if processedValues["timespent"] != "" {
+		_, err := strconv.ParseFloat(processedValues["timespent"], 64)
 		if err != nil {
-			return fmt.Errorf("invalid time format. Please use a number. e.g. 8")
+			return fmt.Errorf("invalid timespent format. Please use a number. e.g. 8")
 		}
-		if processedValues["time"] == "0" {
-			return fmt.Errorf("time spent cannot be 0. Please provide a valid time with flag -t")
+		if processedValues["timespent"] == "0" {
+			return fmt.Errorf("timespent cannot be 0. Please provide a valid time with flag -t")
 		}
 	}
 	// other values are optional
@@ -59,15 +60,15 @@ func ValidateInputValues(processedValues map[string]string) error {
 }
 
 var addTimeSheetEntryCmd = &cobra.Command{
-	Use:           "addTimeSheetEntry",
-	Aliases:       []string{"add", "ate"},
-	Short:         "Add timesheet entry",
+	Use:           "add-timesheet-entry",
+	Aliases:       []string{"add"},
+	Short:         "Alias: add - Add timesheet entry",
 	Long:          "Adds a timesheet entry to the timesheet.",
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Debug("processing flags")
-		flags := []string{"date", "description", "jira-ref", "time", "project", "app-ref", "keyword"}
+		flags := []string{"date", "description", "jira-ref", "timespent", "project", "app-ref", "keyword"}
 		values := make(map[string]string)
 		for _, flag := range flags {
 			value, _ := cmd.Flags().GetString(flag)
@@ -94,7 +95,7 @@ var addTimeSheetEntryCmd = &cobra.Command{
 			processedValues["date"],
 			processedValues["description"],
 			processedValues["jira-ref"],
-			processedValues["time"],
+			processedValues["timespent"],
 			processedValues["project"],
 			processedValues["app-ref"],
 		)
@@ -110,6 +111,7 @@ var addTimeSheetEntryCmd = &cobra.Command{
 		if err != nil {
 			log.Error(err)
 		}
+		PrintWorkItem(workItem)
 	},
 }
 
@@ -118,15 +120,15 @@ func init() {
 	addTimeSheetEntryCmd.Flags().StringP("date", "D", "", "Date of the timesheet entry in yyyy-MM-dd format. Will default to today if not provided.")
 	addTimeSheetEntryCmd.Flags().StringP("description", "d", "", "Description of the timesheet entry")
 	addTimeSheetEntryCmd.Flags().StringP("jira-ref", "j", "", "Jira reference of the timesheet entry. Will default to the value set in config.yaml")
-	addTimeSheetEntryCmd.Flags().StringP("time", "t", "0", "Time spent, in hours, of the timesheet entry")
+	addTimeSheetEntryCmd.Flags().StringP("timespent", "t", "0", "Time spent, in hours, of the timesheet entry")
 	addTimeSheetEntryCmd.Flags().StringP("project", "p", "", "Project of the timesheet entry. Will default to the value set in config.yaml")
 	addTimeSheetEntryCmd.Flags().StringP("app-ref", "a", "", "App reference of the timesheet entry. Will default to the value set in config.yaml")
 	addTimeSheetEntryCmd.Flags().StringP("keyword", "k", "", "Keyword of the timesheet entry. Used to source full description, project, jira-ref and app-ref for known tasks.")
 	addTimeSheetEntryCmd.Flags().StringP("sheet", "s", "", "Sheet name to write the timesheet entry to. Will default to the current week's sheet name.")
 }
 
-func CreateKiaraWorkItem(appConfig config.Config, date string, description string, jiraRef string, time string, project string, appRef string) *workitem.KiaraWorkItem {
-	workItem := workitem.NewKiaraWorkItem(appConfig, date, description, jiraRef, time, project, appRef)
+func CreateKiaraWorkItem(appConfig config.Config, date string, description string, jiraRef string, timespent string, project string, appRef string) *workitem.KiaraWorkItem {
+	workItem := workitem.NewKiaraWorkItem(appConfig, date, description, jiraRef, timespent, project, appRef)
 	return workItem
 }
 
@@ -141,4 +143,17 @@ func WriteTimeSheetEntry(fileName string, sheetName string, templateSheetName st
 		return fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to add timesheet entry"), err)
 	}
 	return nil
+}
+
+func PrintWorkItem(workItem *workitem.KiaraWorkItem) {
+	keyColor := color.New(color.FgCyan).SprintFunc()
+	valueColor := color.New(color.FgYellow).SprintFunc()
+	fmt.Println("Added timesheet entry:")
+	fmt.Println(keyColor("  \"Day\":"), valueColor(workItem.Day))
+	fmt.Println(keyColor("  \"Date\":"), valueColor(workItem.Date))
+	fmt.Println(keyColor("  \"Description\":"), valueColor(workItem.Description))
+	fmt.Println(keyColor("  \"JiraRef\":"), valueColor(workItem.JiraRef))
+	fmt.Println(keyColor("  \"TimeSpent\":"), valueColor(workItem.TimeSpent))
+	fmt.Println(keyColor("  \"Project\":"), valueColor(workItem.Project))
+	fmt.Println(keyColor("  \"AppRef\":"), valueColor(workItem.AppRef))
 }
