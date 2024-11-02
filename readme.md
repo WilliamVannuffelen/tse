@@ -104,8 +104,7 @@ tse kw list -A -o json # bottom
 # add new kw, or update values of existing item
 tse kw add -k newkw -d importanttask -p "CS10101010 - new project"
 ```
-![kw_add](./data/kw_add.png)
-![kw_update](./data/kw_update.png)
+![kw_add_update](./data/kw_add_update.png)
 
 ```sh
 # show kw
