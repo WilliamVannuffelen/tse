@@ -8,11 +8,12 @@ import (
 )
 
 type Config struct {
-	General GeneralConfig `mapstructure:"General"`
-	File    FileConfig    `mapstructure:"File"`
-	Project ProjectConfig `mapstructure:"Project"`
-	JiraRef JiraRefConfig `mapstructure:"JiraRef"`
-	AppRef  AppRefConfig  `mapstructure:"AppRef"`
+	General  GeneralConfig `mapstructure:"General"`
+	File     FileConfig    `mapstructure:"File"`
+	Project  ProjectConfig `mapstructure:"Project"`
+	JiraRef  JiraRefConfig `mapstructure:"JiraRef"`
+	AppRef   AppRefConfig  `mapstructure:"AppRef"`
+	Keywords Keywords      `mapstructure:"Keywords"`
 }
 
 type GeneralConfig struct {
@@ -41,6 +42,10 @@ type AppRefConfig struct {
 	DefaultValue                  string `mapstructure:"defaultValue"`
 	SetDefaultValue               bool   `mapstructure:"setDefaultValue"`
 	SetDefaultValueForNewKeywords bool   `mapstructure:"setDefaultValueForNewKeywords"`
+}
+
+type Keywords struct {
+	DefaultOutputFormat string `mapstructure:"defaultOutputFormat"`
 }
 
 var cfgFile string
@@ -88,6 +93,7 @@ func InitConfig() Config {
 			{config.Project.DefaultProjectName, "DefaultProjectName", ""},
 			{config.JiraRef.DefaultValue, "JiraRef DefaultValue", ""},
 			{config.AppRef.DefaultValue, "AppRef DefaultValue", ""},
+			{config.Keywords.DefaultOutputFormat, "Keywords DefaultOutputFormat", "Will use 'pp'."},
 		}
 
 		for _, w := range warnings {
