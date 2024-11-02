@@ -49,7 +49,7 @@ var addKeywordCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(addKeywordCmd)
+	rootCmd.AddCommand(addKeywordCmd) // required?
 	addKeywordCmd.Flags().BoolP("help", "h", false, "Display this help message")
 	addKeywordCmd.Flags().StringP("jira-ref", "j", "", "Jira reference of the timesheet entry. Will default to the value set in config.yaml if setting default is not disabled.")
 	addKeywordCmd.Flags().StringP("project", "p", "", "Project of the timesheet entry. Will default to the value set in config.yaml")
