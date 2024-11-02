@@ -37,4 +37,4 @@ AppRef:
 
 Keywords:
   # Default output type: json or pp (pretty print)
-  defaultOutputFormat: "json"
+  defaultOutputFormat: "pp"
