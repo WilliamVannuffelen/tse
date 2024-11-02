@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
+	"github.com/williamvannuffelen/tse/config"
 	"github.com/williamvannuffelen/tse/keywords"
 )
 
@@ -13,6 +14,8 @@ var log logger.Logger
 func SetLogger(l logger.Logger) {
 	log = l
 }
+
+var appConfig = config.InitConfig()
 
 var AddKeywordCmd = &cobra.Command{
 	Use:           "add",
@@ -29,6 +32,15 @@ var AddKeywordCmd = &cobra.Command{
 			return
 		}
 
+		setDefaultOutputFormat(values, appConfig)
+
+		kwValues := make(map[string]string)
+		for k, v := range values {
+			if k != "output" {
+				kwValues[k] = v
+			}
+		}
+
 		keywordValues, err := keywords.MatchAndExtractKeywords(keywordsFilePath, values["keyword"], "addKeyword")
 		if err != nil {
 			log.Error(err)
@@ -43,12 +55,26 @@ var AddKeywordCmd = &cobra.Command{
 
 		if keywordValues == nil {
 			log.Debug("No keyword found for: ", values["keyword"])
-			if err := addNewKeyword(values, keywordsMap, keywordsFilePath); err != nil {
+			if err := addNewKeyword(kwValues, keywordsMap, keywordsFilePath); err != nil {
 				log.Error(err)
+			}
+			if values["output"] == "pp" {
+				fmt.Println("Keyword added:")
 			}
 		} else {
 			log.Debug("Existing keyword found for: ", values["keyword"])
-			if err := updateExistingKeyword(values, keywordsMap, keywordsFilePath); err != nil {
+			if err := updateExistingKeyword(kwValues, keywordsMap, keywordsFilePath); err != nil {
+				log.Error(err)
+			}
+			if values["output"] == "pp" {
+				fmt.Println("Keyword updated:")
+			}
+		}
+		if values["output"] == "pp" {
+			keywords.PrettyPrintKeyword(kwValues)
+		} else {
+			err := keywords.PrintKeywordAsJSON(kwValues)
+			if err != nil {
 				log.Error(err)
 			}
 		}
@@ -62,10 +88,11 @@ func init() {
 	AddKeywordCmd.Flags().StringP("description", "d", "", "Description of the timesheet entry.")
 	AddKeywordCmd.Flags().StringP("app-ref", "a", "", "App reference of the timesheet entry. Will default to the value set in config.yaml if setting default is not disabled.")
 	AddKeywordCmd.Flags().StringP("keyword", "k", "", "Keyword of the timesheet entry. Used to source full description, project, jira-ref and app-ref for known tasks.")
+	AddKeywordCmd.Flags().StringP("output", "o", "", "Output format. Options: json, pp (pretty print). Default: pp")
 }
 
 func getFlagValues(cmd *cobra.Command) map[string]string {
-	flags := []string{"description", "jira-ref", "project", "app-ref", "keyword"}
+	flags := []string{"description", "jira-ref", "project", "app-ref", "keyword", "output"}
 	values := make(map[string]string)
 	for _, flag := range flags {
 		value, _ := cmd.Flags().GetString(flag)
@@ -84,6 +111,12 @@ func validateAndSetDefaults(values map[string]string) error {
 	return nil
 }
 
+func setDefaultOutputFormat(values map[string]string, appConfig config.Config) {
+	if values["output"] == "" {
+		values["output"] = appConfig.Keywords.DefaultOutputFormat
+	}
+}
+
 func addNewKeyword(values map[string]string, keywordsMap map[string]keywords.Keyword, keywordsFilePath string) error {
 	updatedKeywords, err := keywords.AddNewKeyword(values, keywordsMap)
 	if err != nil {
@@ -92,7 +125,6 @@ func addNewKeyword(values map[string]string, keywordsMap map[string]keywords.Key
 	if err := keywords.WriteKeywordsToFile(keywordsFilePath, updatedKeywords); err != nil {
 		return err
 	}
-	log.Info("Added keyword: ", values["keyword"])
 	return nil
 }
 
@@ -104,6 +136,5 @@ func updateExistingKeyword(values map[string]string, keywordsMap map[string]keyw
 	if err := keywords.WriteKeywordsToFile(keywordsFilePath, updatedKeywords); err != nil {
 		return err
 	}
-	log.Info("Updated keyword: ", values["keyword"])
 	return nil
 }

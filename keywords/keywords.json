@@ -29,8 +29,9 @@
     "description": "dfoo!"
   },
   "foo": {
-    "jiraRef": "OPS-1234",
-    "project": "CS0123456 - Foo Bar"
+    "jiraRef": "OPS-305",
+    "project": "CS0126444 - Wonen Cloudzone - dedicated operationeel projectteam",
+    "description": "faa"
   },
   "newkw": {
     "jiraRef": "OPS-305",
