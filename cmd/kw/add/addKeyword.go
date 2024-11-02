@@ -1,14 +1,21 @@
-package cmd
+package kwadd
 
 import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
 	"github.com/williamvannuffelen/tse/keywords"
 )
 
-var addKeywordCmd = &cobra.Command{
-	Use:           "addKeyword",
+var log logger.Logger
+
+func SetLogger(l logger.Logger) {
+	log = l
+}
+
+var AddKeywordCmd = &cobra.Command{
+	Use:           "add",
 	Short:         "Add keyword",
 	Long:          "Adds a keywords to the keyword storage.",
 	SilenceUsage:  true,
@@ -49,13 +56,12 @@ var addKeywordCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(addKeywordCmd) // required?
-	addKeywordCmd.Flags().BoolP("help", "h", false, "Display this help message")
-	addKeywordCmd.Flags().StringP("jira-ref", "j", "", "Jira reference of the timesheet entry. Will default to the value set in config.yaml if setting default is not disabled.")
-	addKeywordCmd.Flags().StringP("project", "p", "", "Project of the timesheet entry. Will default to the value set in config.yaml")
-	addKeywordCmd.Flags().StringP("description", "d", "", "Description of the timesheet entry.")
-	addKeywordCmd.Flags().StringP("app-ref", "a", "", "App reference of the timesheet entry. Will default to the value set in config.yaml if setting default is not disabled.")
-	addKeywordCmd.Flags().StringP("keyword", "k", "", "Keyword of the timesheet entry. Used to source full description, project, jira-ref and app-ref for known tasks.")
+	AddKeywordCmd.Flags().BoolP("help", "h", false, "Display this help message")
+	AddKeywordCmd.Flags().StringP("jira-ref", "j", "", "Jira reference of the timesheet entry. Will default to the value set in config.yaml if setting default is not disabled.")
+	AddKeywordCmd.Flags().StringP("project", "p", "", "Project of the timesheet entry. Will default to the value set in config.yaml")
+	AddKeywordCmd.Flags().StringP("description", "d", "", "Description of the timesheet entry.")
+	AddKeywordCmd.Flags().StringP("app-ref", "a", "", "App reference of the timesheet entry. Will default to the value set in config.yaml if setting default is not disabled.")
+	AddKeywordCmd.Flags().StringP("keyword", "k", "", "Keyword of the timesheet entry. Used to source full description, project, jira-ref and app-ref for known tasks.")
 }
 
 func getFlagValues(cmd *cobra.Command) map[string]string {

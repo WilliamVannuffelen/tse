@@ -1,13 +1,5 @@
-# TODO:
+#  go timesheet entry cli
 
-- Functionality to build key/value map for projects, JiraRefs
-e.g. "mvp" = "CS0100770 - P10 Technical Support...."
-e.g. "crmp" = "CRM Production" = "OPS-3598"
+Sister project of [Kiara automation](https://github.com/WilliamVannuffelen/kiara_automation).
 
-
-- Add default target sheetname = current week, start of the week
-
-
-Next up:
-
-- logic to form full-fat KiaraWorkItem objects based on combination of cmdline input and KeyWord objects
+CLI tool to generate timesheet entries, sourcing from global or keyword-specific defaults to reduce human effort.

@@ -109,7 +109,6 @@ var addTimeSheetEntryCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(addTimeSheetEntryCmd)
 	addTimeSheetEntryCmd.Flags().BoolP("help", "h", false, "Display this help message")
 	addTimeSheetEntryCmd.Flags().StringP("date", "D", "", "Date of the timesheet entry in yyyy-MM-dd format. Will default to today if not provided.")
 	addTimeSheetEntryCmd.Flags().StringP("description", "d", "", "Description of the timesheet entry")
