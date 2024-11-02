@@ -56,6 +56,7 @@ func ValidateInputValues(processedValues map[string]string) error {
 
 var addTimeSheetEntryCmd = &cobra.Command{
 	Use:           "addTimeSheetEntry",
+	Aliases:       []string{"add", "ate"},
 	Short:         "Add timesheet entry",
 	Long:          "Adds a timesheet entry to the timesheet.",
 	SilenceUsage:  true,
