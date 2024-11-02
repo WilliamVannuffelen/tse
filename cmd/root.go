@@ -37,10 +37,9 @@ func Execute() error {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	rootCmd.Flags().BoolP("help", "h", false, "Help message for help")
-	rootCmd.PersistentFlags().String("debug", "d", "Enable debug logging")
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./config/config.yaml)")
+	rootCmd.Flags().BoolP("help", "h", true, "Display this help message")
+	rootCmd.PersistentFlags().BoolP("debug", "x", false, "Enable debug logging")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file path (default is ./config/config.yaml)")
 
 	appConfig = config.InitConfig()
 	log, err = logger.InitLogger("log.txt", appConfig.General.LogLevel) // TODO: add log path to config
@@ -57,7 +56,6 @@ func init() {
 
 	rootCmd.AddCommand(addTimeSheetEntryCmd)
 	rootCmd.AddCommand(kw.KwCmd)
-	fmt.Println("no errors yet")
 }
 
 func initConfig() {
@@ -71,6 +69,12 @@ func initConfig() {
 	}
 
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+		debug, err := rootCmd.Flags().GetBool("debug")
+		if err != nil {
+			log.Error(err)
+		}
+		if debug {
+			fmt.Println("Using config file:", viper.ConfigFileUsed())
+		}
 	}
 }
