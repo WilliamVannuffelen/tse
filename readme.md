@@ -92,11 +92,13 @@ tse kw list
 
 ```sh
 # list existing keyword info:
-tse kw list -A # left
+tse kw list -A # top
 # can also set output format to json for consumption with jq
-tse kw list -A -o json #right
+tse kw list -A -o json # bottom
 ```
-![kw_list_a](./data/kw_list_a.png)   ![kw_list_a_json](./data/kw_list_a_json.png)
+![kw_list_a](./data/kw_list_a.png)
+
+![kw_list_a_json](./data/kw_list_a_json.png)
 
 ```sh
 # add new kw, or update values of existing item
