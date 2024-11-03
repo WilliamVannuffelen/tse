@@ -6,10 +6,12 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
+	"github.com/williamvannuffelen/tse/cmd/add"
 	"github.com/williamvannuffelen/tse/cmd/kw"
 	"github.com/williamvannuffelen/tse/cmd/kw/add"
 	"github.com/williamvannuffelen/tse/cmd/kw/list"
 	"github.com/williamvannuffelen/tse/cmd/kw/show"
+	"github.com/williamvannuffelen/tse/cmd/show"
 	"github.com/williamvannuffelen/tse/config"
 	"github.com/williamvannuffelen/tse/excel"
 	"github.com/williamvannuffelen/tse/keywords"
@@ -50,14 +52,16 @@ func init() {
 	workitem.SetLogger(log)
 	excel.SetLogger(log)
 	keywords.SetLogger(log)
+	add.SetLogger(log)
+	show.SetLogger(log)
 	kw.SetLogger(log)
 	kwlist.SetLogger(log)
 	kwadd.SetLogger(log)
 	kwshow.SetLogger(log)
 	log.Debug("Logger init done from root.go")
 
-	rootCmd.AddCommand(addTimeSheetEntryCmd)
-	rootCmd.AddCommand(showTimeSheetEntryCmd)
+	rootCmd.AddCommand(add.AddTimeSheetEntryCmd)
+	rootCmd.AddCommand(show.ShowTimeSheetEntryCmd)
 	rootCmd.AddCommand(kw.KwCmd)
 }
 

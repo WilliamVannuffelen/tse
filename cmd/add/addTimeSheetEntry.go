@@ -1,9 +1,10 @@
-package cmd
+package add
 
 import (
 	"fmt"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
+	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
 	"github.com/williamvannuffelen/tse/config"
 	"github.com/williamvannuffelen/tse/excel"
 	help "github.com/williamvannuffelen/tse/helpers"
@@ -12,6 +13,14 @@ import (
 	"strconv"
 	"time"
 )
+
+var log logger.Logger
+
+func SetLogger(l logger.Logger) {
+	log = l
+}
+
+var appConfig = config.InitConfig()
 
 func ProcessKeywords(appConfig config.Config, values map[string]string) (map[string]string, error) {
 	log.Debug("inside processkw")
@@ -59,7 +68,7 @@ func ValidateInputValues(processedValues map[string]string) error {
 	return nil
 }
 
-var addTimeSheetEntryCmd = &cobra.Command{
+var AddTimeSheetEntryCmd = &cobra.Command{
 	Use:           "add-timesheet-entry",
 	Aliases:       []string{"add"},
 	Short:         "Alias: add - Add timesheet entry",
@@ -116,15 +125,15 @@ var addTimeSheetEntryCmd = &cobra.Command{
 }
 
 func init() {
-	addTimeSheetEntryCmd.Flags().BoolP("help", "h", false, "Display this help message")
-	addTimeSheetEntryCmd.Flags().StringP("date", "D", "", "Date of the timesheet entry in yyyy-MM-dd format. Will default to today if not provided.")
-	addTimeSheetEntryCmd.Flags().StringP("description", "d", "", "Description of the timesheet entry")
-	addTimeSheetEntryCmd.Flags().StringP("jira-ref", "j", "", "Jira reference of the timesheet entry. Will default to the value set in config.yaml")
-	addTimeSheetEntryCmd.Flags().StringP("timespent", "t", "0", "Time spent, in hours, of the timesheet entry")
-	addTimeSheetEntryCmd.Flags().StringP("project", "p", "", "Project of the timesheet entry. Will default to the value set in config.yaml")
-	addTimeSheetEntryCmd.Flags().StringP("app-ref", "a", "", "App reference of the timesheet entry. Will default to the value set in config.yaml")
-	addTimeSheetEntryCmd.Flags().StringP("keyword", "k", "", "Keyword of the timesheet entry. Used to source full description, project, jira-ref and app-ref for known tasks.")
-	addTimeSheetEntryCmd.Flags().StringP("sheet", "s", "", "Sheet name to write the timesheet entry to. Will default to the current week's sheet name.")
+	AddTimeSheetEntryCmd.Flags().BoolP("help", "h", false, "Display this help message")
+	AddTimeSheetEntryCmd.Flags().StringP("date", "D", "", "Date of the timesheet entry in yyyy-MM-dd format. Will default to today if not provided.")
+	AddTimeSheetEntryCmd.Flags().StringP("description", "d", "", "Description of the timesheet entry")
+	AddTimeSheetEntryCmd.Flags().StringP("jira-ref", "j", "", "Jira reference of the timesheet entry. Will default to the value set in config.yaml")
+	AddTimeSheetEntryCmd.Flags().StringP("timespent", "t", "0", "Time spent, in hours, of the timesheet entry")
+	AddTimeSheetEntryCmd.Flags().StringP("project", "p", "", "Project of the timesheet entry. Will default to the value set in config.yaml")
+	AddTimeSheetEntryCmd.Flags().StringP("app-ref", "a", "", "App reference of the timesheet entry. Will default to the value set in config.yaml")
+	AddTimeSheetEntryCmd.Flags().StringP("keyword", "k", "", "Keyword of the timesheet entry. Used to source full description, project, jira-ref and app-ref for known tasks.")
+	AddTimeSheetEntryCmd.Flags().StringP("sheet", "s", "", "Sheet name to write the timesheet entry to. Will default to the current week's sheet name.")
 }
 
 func CreateKiaraWorkItem(appConfig config.Config, date string, description string, jiraRef string, timespent string, project string, appRef string) *workitem.KiaraWorkItem {

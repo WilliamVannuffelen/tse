@@ -1,15 +1,25 @@
-package cmd
+package show
 
 import (
 	//"os"
 	"fmt"
 	"github.com/spf13/cobra"
+	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
+	"github.com/williamvannuffelen/tse/config"
 	help "github.com/williamvannuffelen/tse/helpers"
 	"github.com/williamvannuffelen/tse/prettyprint"
 	"github.com/williamvannuffelen/tse/workitem"
 )
 
-var showTimeSheetEntryCmd = &cobra.Command{
+var log logger.Logger
+
+func SetLogger(l logger.Logger) {
+	log = l
+}
+
+var appConfig = config.InitConfig()
+
+var ShowTimeSheetEntryCmd = &cobra.Command{
 	Use:           "show-timesheet-entry",
 	Aliases:       []string{"show"},
 	Short:         "Alias: show - Show timesheet entries",
@@ -25,7 +35,7 @@ var showTimeSheetEntryCmd = &cobra.Command{
 
 		if values["date"] != "" {
 			log.Debug("setting start of week")
-			startOfWeek, err = help.GetStartOfWeek(values["date"].(string))
+			startOfWeek, err := help.GetStartOfWeek(values["date"].(string))
 			if err != nil {
 				log.Error(err)
 				return
@@ -90,14 +100,14 @@ var showTimeSheetEntryCmd = &cobra.Command{
 }
 
 func init() {
-	showTimeSheetEntryCmd.Flags().BoolP("help", "h", false, "Display this help message")
-	showTimeSheetEntryCmd.Flags().StringP("output", "o", appConfig.ShowTimeSheetEntry.DefaultOutputFormat, "Output format. Options: json, pp (pretty print).")
-	showTimeSheetEntryCmd.Flags().StringP("date", "d", "", "Date to show timesheet entries for. Format: yyyy-MM-dd. i.e.: 2024-11-18")
-	showTimeSheetEntryCmd.Flags().StringP("day", "D", "", "Day to show timesheet entries for: mon | tue | wed | thu | fri | sat | sun .")
-	showTimeSheetEntryCmd.Flags().BoolP("no-week", "w", false, "Show only the provided date instead of the entire week")
-	showTimeSheetEntryCmd.Flags().BoolP("hide-appref", "a", appConfig.ShowTimeSheetEntry.HideAppRef, "Hide the AppRef column")
-	showTimeSheetEntryCmd.Flags().BoolP("hide-jiraref", "j", appConfig.ShowTimeSheetEntry.HideJiraRef, "Hide the JiraRef column")
-	showTimeSheetEntryCmd.Flags().BoolP("hide-project", "p", appConfig.ShowTimeSheetEntry.HideProject, "Hide the Project column")
+	ShowTimeSheetEntryCmd.Flags().BoolP("help", "h", false, "Display this help message")
+	ShowTimeSheetEntryCmd.Flags().StringP("output", "o", appConfig.ShowTimeSheetEntry.DefaultOutputFormat, "Output format. Options: json, pp (pretty print).")
+	ShowTimeSheetEntryCmd.Flags().StringP("date", "d", "", "Date to show timesheet entries for. Format: yyyy-MM-dd. i.e.: 2024-11-18")
+	ShowTimeSheetEntryCmd.Flags().StringP("day", "D", "", "Day to show timesheet entries for: mon | tue | wed | thu | fri | sat | sun .")
+	ShowTimeSheetEntryCmd.Flags().BoolP("no-week", "w", false, "Show only the provided date instead of the entire week")
+	ShowTimeSheetEntryCmd.Flags().BoolP("hide-appref", "a", appConfig.ShowTimeSheetEntry.HideAppRef, "Hide the AppRef column")
+	ShowTimeSheetEntryCmd.Flags().BoolP("hide-jiraref", "j", appConfig.ShowTimeSheetEntry.HideJiraRef, "Hide the JiraRef column")
+	ShowTimeSheetEntryCmd.Flags().BoolP("hide-project", "p", appConfig.ShowTimeSheetEntry.HideProject, "Hide the Project column")
 }
 
 func setDateIfDayProvided(values map[string]interface{}) error {
