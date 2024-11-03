@@ -70,6 +70,7 @@ var showTimeSheetEntryCmd = &cobra.Command{
 		log.Debug("Time spent per task: ", timeSpentPerTask)
 
 		aggregatedWorkItems, err := workitem.AggregateWorkItems(workItems)
+		log.Debug(aggregatedWorkItems)
 		if err != nil {
 			log.Error(err)
 			return
@@ -78,14 +79,12 @@ var showTimeSheetEntryCmd = &cobra.Command{
 		if values["no-week"] == false {
 			fmt.Println("Showing entire week starting on ", startOfWeek)
 			prettyprint.PrintTimeSpentPerDayTable(timeSpentPerDay, "")
-			//prettyprint.PrintTimeSpentWeekTotal(totalTimeSpent)
 			prettyprint.PrintAggregatedWorkItemTable(aggregatedWorkItems, !(values["hide-project"].(bool)), !(values["hide-appref"].(bool)), !(values["hide-jiraref"].(bool)))
 		} else {
 			fmt.Println("Showing only the selected date ", values["date"])
 			prettyprint.PrintTimeSpentPerDayTable(timeSpentPerDay, values["date"].(string))
-			prettyprint.PrintAggregatedWorkItemTable(aggregatedWorkItems, !(values["hide-project"].(bool)), !(values["hide-appref"].(bool)), !(values["hide-jiraref"].(bool)))
+			prettyprint.PrintSingleDayWorkItemTable(workItems, values["date"].(string), !(values["hide-project"].(bool)), !(values["hide-appref"].(bool)), !(values["hide-jiraref"].(bool)))
 		}
-
 	},
 }
 

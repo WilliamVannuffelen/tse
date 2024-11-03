@@ -5,11 +5,12 @@ General:
   silenceConfigWarnings: true
   # The log level that will be used for the application. Possible values are: "trace", "debug", "info", "warn", "error", "fatal", "panic"
   # Default value is "info". Set it to "debug" for verbose output if you're having issues.
-  logLevel: "debug"
+  logLevel: "info"
 
 File:
   # The path to the target file. The file should be in xlsx format.
-  targetFilePath: "./ebase.xlsx"
+  #targetFilePath: "./ebase.xlsx"
+  targetFilePath: "/Users/wvannuffelen/wvl/devel/tempo/timsheet (version 2) (version 2) (version 2) (version 1)(AutoRecovered) OK-2024(AutoRecovered).xlsx"
   # The name of the sheet in the file that will be used. If the sheet name is not provided, a sheet with the yyyy-MM-dd format of the first day of this week.
   targetSheetName: ""
   # Name of the empty, but formatted sheet used to create new ones. If empty, the first sheet in the target file will be used.
