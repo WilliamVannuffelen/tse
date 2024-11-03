@@ -5,7 +5,7 @@ General:
   silenceConfigWarnings: true
   # The log level that will be used for the application. Possible values are: "trace", "debug", "info", "warn", "error", "fatal", "panic"
   # Default value is "info". Set it to "debug" for verbose output if you're having issues.
-  logLevel: "info"
+  logLevel: "debug"
 
 File:
   # The path to the target file. The file should be in xlsx format.
