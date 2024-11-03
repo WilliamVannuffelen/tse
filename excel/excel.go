@@ -14,6 +14,25 @@ func SetLogger(l logger.Logger) {
 	log = l
 }
 
+func SelectTargetSheet(fileName string, sheetName string) (*excelize.File, error) {
+	excelFile, err := OpenExcelFile(fileName)
+	if err != nil {
+		return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to set active sheet"), err)
+	}
+	sheetIndex, err := FindSheetIndex(excelFile, sheetName)
+	if err != nil {
+		return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to set active sheet"), err)
+	}
+	if sheetIndex == -1 {
+		return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to set active sheet"), fmt.Errorf("sheet not found"))
+	} else {
+		SelectSheet(excelFile, sheetName, sheetIndex)
+	}
+	log.Debug(fmt.Sprintf("Selected target sheet %s at index %d in file %s", sheetName, sheetIndex, fileName))
+	return excelFile, nil
+}
+
+// rename -> does more than setting target sheet
 func SetTargetSheet(fileName string, sheetName string, templateSheetName string) (*excelize.File, error) {
 	excelFile, err := OpenExcelFile(fileName)
 	if err != nil {

@@ -57,6 +57,7 @@ func init() {
 	log.Debug("Logger init done from root.go")
 
 	rootCmd.AddCommand(addTimeSheetEntryCmd)
+	rootCmd.AddCommand(showTimeSheetEntryCmd)
 	rootCmd.AddCommand(kw.KwCmd)
 }
 

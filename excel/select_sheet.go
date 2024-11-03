@@ -48,6 +48,7 @@ func FindTemplateSheet(excelFile *excelize.File, templateSheetName string) (int,
 }
 
 // perhaps not in the right place, figure out where to put this later
+// replace with helpers.GetCurrentWeekDate()
 func GetCurrentWeekSheetName() string {
 	now := time.Now()
 	today := time.Now().Weekday()
