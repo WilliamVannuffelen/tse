@@ -1,8 +1,19 @@
-package cmd
+package add
 
 import (
+	logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
+	"github.com/williamvannuffelen/tse/config"
 	"testing"
 )
+
+func init() {
+	log, err := logger.InitLogger("log.txt", appConfig.General.LogLevel) // TODO: add log path to config
+	if err != nil {
+		log.Warn(err)
+	}
+	appConfig = config.InitConfig()
+	SetLogger(log)
+}
 
 func Equal[v comparable](t *testing.T, got, expected v) {
 	t.Helper()
