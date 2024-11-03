@@ -110,7 +110,7 @@ tse kw add -k newkw -d importanttask -p "CS10101010 - new project"
 # show kw
 tse kw show -k newkw
 ```
-TODO: implement kw show
+![kw_show](./data/kw_show.png)
 
 ## Help commands are available for every command and subcommand:
 ```sh
