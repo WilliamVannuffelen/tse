@@ -50,9 +50,10 @@ type Keywords struct {
 }
 
 type ShowTimeSheetEntry struct {
-	HideProject bool `mapstructure:"hideProject"`
-	HideAppRef  bool `mapstructure:"hideAppRef"`
-	HideJiraRef bool `mapstructure:"hideJiraRef"`
+	DefaultOutputFormat string `mapstructure:"defaultOutputFormat"`
+	HideProject         bool   `mapstructure:"hideProject"`
+	HideAppRef          bool   `mapstructure:"hideAppRef"`
+	HideJiraRef         bool   `mapstructure:"hideJiraRef"`
 }
 
 var cfgFile string

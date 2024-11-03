@@ -19,6 +19,7 @@ var showTimeSheetEntryCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var startOfWeek string
 
+		// Prep input values
 		values := getFlagValues(cmd)
 		setDefaultOutputFormat(values, appConfig)
 
@@ -38,17 +39,16 @@ var showTimeSheetEntryCmd = &cobra.Command{
 			return
 		}
 		log.Debug("Date: ", values["date"])
-
 		if startOfWeek == "" {
 			startOfWeek = help.GetCurrentWeekDate()
 		}
 
+		// Get & process data
 		workItems, err := getTimeSheetEntries(appConfig.File.TargetFilePath, startOfWeek)
 		if err != nil {
 			log.Error(err)
 			return
 		}
-
 		totalTimeSpent, err := workitem.CalculateTotalTimeSpent(workItems)
 		if err != nil {
 			log.Error(err)
@@ -76,40 +76,36 @@ var showTimeSheetEntryCmd = &cobra.Command{
 			return
 		}
 
+		// Print output
 		if values["day"] != "" {
-			// overrides no-week
-			values["no-week"] = true
-			date, err := help.GetDateFromDay(values["day"].(string))
-			if err != nil {
-				log.Error(err)
-				return
-			}
-			values["date"] = date
-			fmt.Println("Showing only the selected day:", values["day"], values["date"])
-
-			prettyprint.PrintTimeSpentPerDayTable(timeSpentPerDay, values["date"].(string))
-			prettyprint.PrintSingleDayWorkItemTable(workItems, values["date"].(string), !(values["hide-project"].(bool)), !(values["hide-appref"].(bool)), !(values["hide-jiraref"].(bool)))
+			setDateIfDayProvided(values)
+			prettyprint.PrintDayInSelectedFormat(values, timeSpentPerDay, startOfWeek, workItems, aggregatedWorkItems)
 		}
-
 		if values["no-week"] == false {
-			fmt.Println("Showing entire week starting on ", startOfWeek)
-			prettyprint.PrintTimeSpentPerDayTable(timeSpentPerDay, "")
-			prettyprint.PrintAggregatedWorkItemTable(aggregatedWorkItems, !(values["hide-project"].(bool)), !(values["hide-appref"].(bool)), !(values["hide-jiraref"].(bool)))
+			prettyprint.PrintWeekInSelectedFormat(values, timeSpentPerDay, startOfWeek, workItems, aggregatedWorkItems)
 		} else if values["day"] == "" {
-			fmt.Println("Showing only the selected date ", values["date"])
-			prettyprint.PrintTimeSpentPerDayTable(timeSpentPerDay, values["date"].(string))
-			prettyprint.PrintSingleDayWorkItemTable(workItems, values["date"].(string), !(values["hide-project"].(bool)), !(values["hide-appref"].(bool)), !(values["hide-jiraref"].(bool)))
+			prettyprint.PrintDayInSelectedFormat(values, timeSpentPerDay, startOfWeek, workItems, aggregatedWorkItems)
 		}
 	},
 }
 
 func init() {
 	showTimeSheetEntryCmd.Flags().BoolP("help", "h", false, "Display this help message")
-	showTimeSheetEntryCmd.Flags().StringP("output", "o", "", "Output format. Options: json, pp (pretty print).")
+	showTimeSheetEntryCmd.Flags().StringP("output", "o", appConfig.ShowTimeSheetEntry.DefaultOutputFormat, "Output format. Options: json, pp (pretty print).")
 	showTimeSheetEntryCmd.Flags().StringP("date", "d", "", "Date to show timesheet entries for. Format: yyyy-MM-dd. i.e.: 2024-11-18")
 	showTimeSheetEntryCmd.Flags().StringP("day", "D", "", "Day to show timesheet entries for: mon | tue | wed | thu | fri | sat | sun .")
 	showTimeSheetEntryCmd.Flags().BoolP("no-week", "w", false, "Show only the provided date instead of the entire week")
 	showTimeSheetEntryCmd.Flags().BoolP("hide-appref", "a", appConfig.ShowTimeSheetEntry.HideAppRef, "Hide the AppRef column")
 	showTimeSheetEntryCmd.Flags().BoolP("hide-jiraref", "j", appConfig.ShowTimeSheetEntry.HideJiraRef, "Hide the JiraRef column")
 	showTimeSheetEntryCmd.Flags().BoolP("hide-project", "p", appConfig.ShowTimeSheetEntry.HideProject, "Hide the Project column")
+}
+
+func setDateIfDayProvided(values map[string]interface{}) error {
+	values["no-week"] = true
+	date, err := help.GetDateFromDay(values["day"].(string))
+	if err != nil {
+		return fmt.Errorf("%s %s", help.NewErrorStackTraceString("failed to process provided day value"), err)
+	}
+	values["date"] = date
+	return nil
 }

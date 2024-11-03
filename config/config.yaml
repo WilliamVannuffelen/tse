@@ -41,6 +41,8 @@ Keywords:
   defaultOutputFormat: "pp"
 
 ShowTimeSheetEntry:
+  # Default output type: json or pp (pretty print)
+  defaultOutputFormat: "json"
   # Hide Project from output of tse show command?
   hideProject: false
   # Hide JiraRef from output of tse show command?
