@@ -5,11 +5,15 @@ import (
 	"github.com/fatih/color"
 	"github.com/williamvannuffelen/tse/workitem"
 	"os"
+	"sort"
 	"strings"
 	"text/tabwriter"
 )
 
 func PrintAggregatedWorkItemTable(workItems []workitem.AggregatedWorkItem, showProject bool, showAppRef bool, showJiraRef bool) {
+	sort.Slice(workItems, func(i, j int) bool {
+		return workItems[i].Description < workItems[j].Description
+	})
 	maxDescriptionLen := len("Description")
 	maxJiraRefLen := len("JiraRef")
 	maxProjectLen := len("Project")

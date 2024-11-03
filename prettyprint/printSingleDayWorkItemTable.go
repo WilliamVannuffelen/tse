@@ -5,6 +5,7 @@ import (
 	"github.com/fatih/color"
 	"github.com/williamvannuffelen/tse/workitem"
 	"os"
+	"sort"
 	"strings"
 	"text/tabwriter"
 )
@@ -16,6 +17,11 @@ func PrintSingleDayWorkItemTable(workItems []workitem.KiaraWorkItem, date string
 			filteredWorkItems = append(filteredWorkItems, item)
 		}
 	}
+
+	sort.Slice(filteredWorkItems, func(i, j int) bool {
+		return filteredWorkItems[i].Description < filteredWorkItems[j].Description
+	})
+
 	maxDescriptionLen := len("Description")
 	maxJiraRefLen := len("JiraRef")
 	maxProjectLen := len("Project")

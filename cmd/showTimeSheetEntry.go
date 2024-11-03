@@ -76,11 +76,26 @@ var showTimeSheetEntryCmd = &cobra.Command{
 			return
 		}
 
+		if values["day"] != "" {
+			// overrides no-week
+			values["no-week"] = true
+			date, err := help.GetDateFromDay(values["day"].(string))
+			if err != nil {
+				log.Error(err)
+				return
+			}
+			values["date"] = date
+			fmt.Println("Showing only the selected day:", values["day"], values["date"])
+
+			prettyprint.PrintTimeSpentPerDayTable(timeSpentPerDay, values["date"].(string))
+			prettyprint.PrintSingleDayWorkItemTable(workItems, values["date"].(string), !(values["hide-project"].(bool)), !(values["hide-appref"].(bool)), !(values["hide-jiraref"].(bool)))
+		}
+
 		if values["no-week"] == false {
 			fmt.Println("Showing entire week starting on ", startOfWeek)
 			prettyprint.PrintTimeSpentPerDayTable(timeSpentPerDay, "")
 			prettyprint.PrintAggregatedWorkItemTable(aggregatedWorkItems, !(values["hide-project"].(bool)), !(values["hide-appref"].(bool)), !(values["hide-jiraref"].(bool)))
-		} else {
+		} else if values["day"] == "" {
 			fmt.Println("Showing only the selected date ", values["date"])
 			prettyprint.PrintTimeSpentPerDayTable(timeSpentPerDay, values["date"].(string))
 			prettyprint.PrintSingleDayWorkItemTable(workItems, values["date"].(string), !(values["hide-project"].(bool)), !(values["hide-appref"].(bool)), !(values["hide-jiraref"].(bool)))

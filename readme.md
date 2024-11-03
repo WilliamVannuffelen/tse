@@ -16,43 +16,10 @@ These are overridden in reverse order. I.e. a commandline value will override a 
 
 
 
-## Usage examples
+## Example
 
 ```sh
-# provide all values as flags:
-tse add --description "did some work" --timespent 1.5 --project "CS000001 - Some project" --jira-ref DEV-2021 --app-ref 60344 --date 2024-10-31
-# or with short form flags:
-tse add -d "did some work" -t 1.5 -p "CS000001 - Some project" -j DEV-2021 -a 60344 -d 2024-10-31
-
-Added timesheet entry:
-  "Day": Thu
-  "Date": 2024-10-31
-  "Description": did some work
-  "JiraRef": DEV-2021
-  "TimeSpent": 1.5
-  "Project": CS000001 - Some project
-  "AppRef": 60344
-```
-
-```sh
-# relying on global defaults from config.yaml:
-# sources JiraRef and Project from config.yaml
-# doesn't source AppRef since the default is disabled in config.yaml
-# defaults to datetime of today
-tse add -d "did some work" -t 1.5
-
-Added timesheet entry:
-  "Day": Sat
-  "Date": 2024-11-02
-  "Description": did some work
-  "JiraRef": DEV-2021
-  "TimeSpent": 1.5
-  "Project": CS000001 - Some project
-  "AppRef":
-```
-
-```sh
-# using a keyword for recurring tasks:
+# using a keyword to source values for recurring tasks:
 tse add -k s -t 1.5
 
 Added timesheet entry:
@@ -66,6 +33,8 @@ Added timesheet entry:
 ```
 
 ## Results in an excel sheet ready for processing by [Kiara automation](https://github.com/WilliamVannuffelen/kiara_automation):
+
+#### The week's sheet is created from a template if it doesn't exist yet
 
 ![resulting_excel_example](./data/excel_example.png)
 
@@ -112,6 +81,34 @@ tse kw show -k newkw
 ```
 ![kw_show](./data/kw_show.png)
 
+## 3. Add some timesheet entries
+
+```sh
+
+```
+
+
+## 4. View existing timesheet entries
+
+```sh
+# show current week overview
+tse show
+```
+![show](./data/show.png)
+
+```sh
+# let's zoom in on this monday
+tse show -D mon
+```
+![show_day](./data/show_day.png)
+
+```sh
+# or a specific date
+tse show -w -d 2024-09-30
+
+![show_date](./data/show_date.png)
+```
+
 ## Help commands are available for every command and subcommand:
 ```sh
 # running tse with no subcommands prints general help:
@@ -145,4 +142,39 @@ tse add-timesheet-entry -h
 #   -a, --app-ref string       App reference of the timesheet entry. Will default to the value set in config.yaml
 #   -D, --date string          Date of the timesheet entry in yyyy-MM-dd format. Will default to today if not provided.
 #   -d, --description string   Description of the timesheet entry
+```
+
+
+
+```sh
+# provide all values as flags:
+tse add --description "did some work" --timespent 1.5 --project "CS000001 - Some project" --jira-ref DEV-2021 --app-ref 60344 --date 2024-10-31
+# or with short form flags:
+tse add -d "did some work" -t 1.5 -p "CS000001 - Some project" -j DEV-2021 -a 60344 -d 2024-10-31
+
+Added timesheet entry:
+  "Day": Thu
+  "Date": 2024-10-31
+  "Description": did some work
+  "JiraRef": DEV-2021
+  "TimeSpent": 1.5
+  "Project": CS000001 - Some project
+  "AppRef": 60344
+```
+
+```sh
+# relying on global defaults from config.yaml:
+# sources JiraRef and Project from config.yaml
+# doesn't source AppRef since the default is disabled in config.yaml
+# defaults to datetime of today
+tse add -d "did some work" -t 1.5
+
+Added timesheet entry:
+  "Day": Sat
+  "Date": 2024-11-02
+  "Description": did some work
+  "JiraRef": DEV-2021
+  "TimeSpent": 1.5
+  "Project": CS000001 - Some project
+  "AppRef":
 ```
