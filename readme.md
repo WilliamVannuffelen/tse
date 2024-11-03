@@ -47,7 +47,7 @@ Default path is `./config/config.yaml`
 
 Comments inside the config file explain the purpose of the various settings.
 
-## 2. Add some keywords
+## 2. Optional: Add some keywords
 
 Default path is `./keywords/keywords.json`.
 
@@ -84,69 +84,6 @@ tse kw show -k newkw
 ## 3. Add some timesheet entries
 
 ```sh
-
-```
-
-
-## 4. View existing timesheet entries
-
-```sh
-# show current week overview
-tse show
-```
-![show](./data/show.png)
-
-```sh
-# let's zoom in on this monday
-tse show -D mon
-```
-![show_day](./data/show_day.png)
-
-```sh
-# or a specific date
-tse show -w -d 2024-09-30
-```
-![show_date](./data/show_date.png)
-
-
-## Help commands are available for every command and subcommand:
-```sh
-# running tse with no subcommands prints general help:
-tse
-
-# Time Sheet Entry is a CLI tool to manage time sheet entries.
-
-# Usage:
-#   tse [flags]
-#   tse [command]
-
-# Available Commands:
-#   add-timesheet-entry Alias: add - Add timesheet entry
-```
-
-```sh
-# each subcommand supports help and -h. e.g.:
-tse help kw add
-tse help add
-tse add-timesheet-entry -h
-
-# Adds a timesheet entry to the timesheet.
-
-# Usage:
-#   tse add-timesheet-entry [flags]
-
-# Aliases:
-#   add-timesheet-entry, add
-
-# Flags:
-#   -a, --app-ref string       App reference of the timesheet entry. Will default to the value set in config.yaml
-#   -D, --date string          Date of the timesheet entry in yyyy-MM-dd format. Will default to today if not provided.
-#   -d, --description string   Description of the timesheet entry
-```
-
-
-
-```sh
 # provide all values as flags:
 tse add --description "did some work" --timespent 1.5 --project "CS000001 - Some project" --jira-ref DEV-2021 --app-ref 60344 --date 2024-10-31
 # or with short form flags:
@@ -177,4 +114,93 @@ Added timesheet entry:
   "TimeSpent": 1.5
   "Project": CS000001 - Some project
   "AppRef":
+```
+
+
+
+## 4. View existing timesheet entries
+
+```sh
+# show current week overview
+tse show
+```
+![show](./data/show.png)
+
+```sh
+# let's zoom in on this monday
+tse show -D mon
+```
+![show_day](./data/show_day.png)
+
+```sh
+# or a specific date
+tse show -w -d 2024-09-30
+```
+![show_date](./data/show_date.png)
+
+```sh
+# all of these support json output as well
+tse show -o json
+```
+
+```json
+{
+  "week": "2024-10-28",
+  "timespent": 23,
+  "timespentMonday": 8,
+  "timespentTuesday": 3,
+  "timespentWednesday": 1,
+  "timespentThursday": 3,
+  "timespentFriday": 2,
+  "timespentSaturday": 6,
+  "timespentSunday": 0,
+  "items": [
+    {
+      "Day": "Sat",
+      "Date": "2024-11-02",
+      "Description": "arbeit",
+      "JiraRef": "OPS-305",
+      "TimeSpent": "1",
+      "Project": "CS0126444 - Wonen Cloudzone - dedicated operationeel projectteam",
+      "AppRef": ""
+    },
+  ]
+}
+```
+
+
+## Help commands are available for every command and subcommand:
+```sh
+# running tse with no subcommands prints general help:
+tse
+
+# Time Sheet Entry is a CLI tool to manage time sheet entries.
+
+# Usage:
+#   tse [flags]
+#   tse [command]
+
+# Available Commands:
+#   add-timesheet-entry Alias: add - Add timesheet entry
+```
+
+```sh
+# each subcommand supports help and -h. e.g.:
+tse help kw add
+tse help add
+tse show -h
+tse add-timesheet-entry -h
+
+# Adds a timesheet entry to the timesheet.
+
+# Usage:
+#   tse add-timesheet-entry [flags]
+
+# Aliases:
+#   add-timesheet-entry, add
+
+# Flags:
+#   -a, --app-ref string       App reference of the timesheet entry. Will default to the value set in config.yaml
+#   -D, --date string          Date of the timesheet entry in yyyy-MM-dd format. Will default to today if not provided.
+#   -d, --description string   Description of the timesheet entry
 ```
