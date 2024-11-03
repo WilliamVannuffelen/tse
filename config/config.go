@@ -8,12 +8,13 @@ import (
 )
 
 type Config struct {
-	General  GeneralConfig `mapstructure:"General"`
-	File     FileConfig    `mapstructure:"File"`
-	Project  ProjectConfig `mapstructure:"Project"`
-	JiraRef  JiraRefConfig `mapstructure:"JiraRef"`
-	AppRef   AppRefConfig  `mapstructure:"AppRef"`
-	Keywords Keywords      `mapstructure:"Keywords"`
+	General            GeneralConfig      `mapstructure:"General"`
+	File               FileConfig         `mapstructure:"File"`
+	Project            ProjectConfig      `mapstructure:"Project"`
+	JiraRef            JiraRefConfig      `mapstructure:"JiraRef"`
+	AppRef             AppRefConfig       `mapstructure:"AppRef"`
+	Keywords           Keywords           `mapstructure:"Keywords"`
+	ShowTimeSheetEntry ShowTimeSheetEntry `mapstructure:"ShowTimeSheetEntry"`
 }
 
 type GeneralConfig struct {
@@ -46,6 +47,12 @@ type AppRefConfig struct {
 
 type Keywords struct {
 	DefaultOutputFormat string `mapstructure:"defaultOutputFormat"`
+}
+
+type ShowTimeSheetEntry struct {
+	HideProject bool `mapstructure:"hideProject"`
+	HideAppRef  bool `mapstructure:"hideAppRef"`
+	HideJiraRef bool `mapstructure:"hideJiraRef"`
 }
 
 var cfgFile string
