@@ -105,9 +105,9 @@ tse show -D mon
 ```sh
 # or a specific date
 tse show -w -d 2024-09-30
-
-![show_date](./data/show_date.png)
 ```
+![show_date](./data/show_date.png)
+
 
 ## Help commands are available for every command and subcommand:
 ```sh
