@@ -38,3 +38,11 @@ AppRef:
 Keywords:
   # Default output type: json or pp (pretty print)
   defaultOutputFormat: "pp"
+
+ShowTimeSheetEntry:
+  # Hide Project from output of tse show command?
+  hideProject: false
+  # Hide JiraRef from output of tse show command?
+  hideJiraRef: false
+  # Hide AppRef from output of tse show command?
+  hideAppRef: true

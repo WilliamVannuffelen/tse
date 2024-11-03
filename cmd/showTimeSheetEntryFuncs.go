@@ -12,7 +12,7 @@ import (
 
 // todo: generalize and centralize reused function
 func getFlagValues(cmd *cobra.Command) map[string]interface{} {
-	boolFlags := []string{"no-week"}
+	boolFlags := []string{"no-week", "hide-appref", "hide-jiraref", "hide-project"}
 	values := make(map[string]interface{})
 	for _, flag := range boolFlags {
 		value, _ := cmd.Flags().GetBool(flag)

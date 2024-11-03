@@ -41,7 +41,6 @@ var showTimeSheetEntryCmd = &cobra.Command{
 			log.Error(err)
 			return
 		}
-		log.Debug("WorkItems: ", workItems)
 
 		totalTimeSpent, err := workitem.CalculateTotalTimeSpent(workItems)
 		if err != nil {
@@ -68,16 +67,10 @@ var showTimeSheetEntryCmd = &cobra.Command{
 			log.Error(err)
 			return
 		}
-		log.Debug("Aggregated work items: ", aggregatedWorkItems)
-		log.Debug(len(aggregatedWorkItems))
-
-		for _, item := range aggregatedWorkItems {
-			prettyprint.PrintStructFields(item)
-		}
 
 		prettyprint.PrintTimeSpentPerDayTable(timeSpentPerDay)
 		prettyprint.PrintTimeSpentWeekTotal(totalTimeSpent)
-		prettyprint.PrintAggregatedWorkItemTable(aggregatedWorkItems, false, false, true)
+		prettyprint.PrintAggregatedWorkItemTable(aggregatedWorkItems, !(values["hide-project"].(bool)), !(values["hide-appref"].(bool)), !(values["hide-jiraref"].(bool)))
 
 		if values["no-week"] == false {
 			fmt.Println("Showing entire week")
@@ -94,4 +87,7 @@ func init() {
 	showTimeSheetEntryCmd.Flags().StringP("date", "d", "", "Date to show timesheet entries for. Format: yyyy-MM-dd. i.e.: 2024-11-18")
 	showTimeSheetEntryCmd.Flags().StringP("day", "D", "", "Day to show timesheet entries for: mon | tue | wed | thu | fri | sat | sun .")
 	showTimeSheetEntryCmd.Flags().BoolP("no-week", "w", false, "Show only the provided date instead of the entire week")
+	showTimeSheetEntryCmd.Flags().BoolP("hide-appref", "a", appConfig.ShowTimeSheetEntry.HideAppRef, "Hide the AppRef column")
+	showTimeSheetEntryCmd.Flags().BoolP("hide-jiraref", "j", appConfig.ShowTimeSheetEntry.HideJiraRef, "Hide the JiraRef column")
+	showTimeSheetEntryCmd.Flags().BoolP("hide-project", "p", appConfig.ShowTimeSheetEntry.HideProject, "Hide the Project column")
 }
