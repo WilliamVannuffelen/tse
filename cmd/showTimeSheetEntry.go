@@ -17,11 +17,14 @@ var showTimeSheetEntryCmd = &cobra.Command{
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	Run: func(cmd *cobra.Command, args []string) {
+		var startOfWeek string
+
 		values := getFlagValues(cmd)
 		setDefaultOutputFormat(values, appConfig)
 
 		if values["date"] != "" {
-			startOfWeek, err := help.GetStartOfWeek(values["date"].(string))
+			log.Debug("setting start of week")
+			startOfWeek, err = help.GetStartOfWeek(values["date"].(string))
 			if err != nil {
 				log.Error(err)
 				return
@@ -36,7 +39,11 @@ var showTimeSheetEntryCmd = &cobra.Command{
 		}
 		log.Debug("Date: ", values["date"])
 
-		workItems, err := getTimeSheetEntries(appConfig.File.TargetFilePath, values["date"].(string))
+		if startOfWeek == "" {
+			startOfWeek = help.GetCurrentWeekDate()
+		}
+
+		workItems, err := getTimeSheetEntries(appConfig.File.TargetFilePath, startOfWeek)
 		if err != nil {
 			log.Error(err)
 			return
@@ -68,14 +75,15 @@ var showTimeSheetEntryCmd = &cobra.Command{
 			return
 		}
 
-		prettyprint.PrintTimeSpentPerDayTable(timeSpentPerDay)
-		prettyprint.PrintTimeSpentWeekTotal(totalTimeSpent)
-		prettyprint.PrintAggregatedWorkItemTable(aggregatedWorkItems, !(values["hide-project"].(bool)), !(values["hide-appref"].(bool)), !(values["hide-jiraref"].(bool)))
-
 		if values["no-week"] == false {
-			fmt.Println("Showing entire week")
+			fmt.Println("Showing entire week starting on ", startOfWeek)
+			prettyprint.PrintTimeSpentPerDayTable(timeSpentPerDay, "")
+			//prettyprint.PrintTimeSpentWeekTotal(totalTimeSpent)
+			prettyprint.PrintAggregatedWorkItemTable(aggregatedWorkItems, !(values["hide-project"].(bool)), !(values["hide-appref"].(bool)), !(values["hide-jiraref"].(bool)))
 		} else {
-			fmt.Println("Showing only the date")
+			fmt.Println("Showing only the selected date ", values["date"])
+			prettyprint.PrintTimeSpentPerDayTable(timeSpentPerDay, values["date"].(string))
+			prettyprint.PrintAggregatedWorkItemTable(aggregatedWorkItems, !(values["hide-project"].(bool)), !(values["hide-appref"].(bool)), !(values["hide-jiraref"].(bool)))
 		}
 
 	},
