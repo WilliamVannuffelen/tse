@@ -8,12 +8,15 @@ General:
   logLevel: "debug"
 
 File:
-  # The path to the target file. The file should be in xlsx format.
-  targetFilePath: "./ebase.xlsx"
+  # The path to the target xlsx file. If the file does not exist, it will be created.
+  # If it's an existing sheet - this can be used to support supplying a custom-formatted template file.
+  targetFilePath: "./ebase3.xlsx"
   #targetFilePath: "/Users/wvannuffelen/wvl/devel/tempo/timsheet (version 2) (version 2) (version 2) (version 1)(AutoRecovered) OK-2024(AutoRecovered).xlsx"
   # The name of the sheet in the file that will be used. If the sheet name is not provided, a sheet with the yyyy-MM-dd format of the first day of this week.
   targetSheetName: ""
-  # Name of the empty, but formatted sheet used to create new ones. If empty, the first sheet in the target file will be used.
+  # If set to false, sheets will be created from scratch instead of using a user-formatted template sheet.
+  useTemplateSheet: false
+  # Name of the empty, but user formatted sheet used to create new ones. If empty, the first sheet in the target file will be used.
   templateSheetName: "Template"
 
 Project:

@@ -25,6 +25,7 @@ type GeneralConfig struct {
 
 type FileConfig struct {
 	TargetFilePath    string `mapstructure:"targetFilePath"`
+	UseTemplateSheet  bool   `mapstructure:"useTemplateSheet"`
 	TargetSheetName   string `mapstructure:"targetSheetName"`
 	TemplateSheetName string `mapstructure:"templateSheetName"`
 }
