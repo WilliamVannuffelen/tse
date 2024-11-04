@@ -4,8 +4,6 @@ import (
 	"fmt"
 	help "github.com/williamvannuffelen/tse/helpers"
 	"github.com/xuri/excelize/v2"
-	"time"
-	//logger "github.com/williamvannuffelen/go_zaplogger_iso8601"
 )
 
 func FindSheetIndex(excelFile *excelize.File, sheetName string) (int, error) {
@@ -28,12 +26,6 @@ func FindLastSheetIndex(excelFile *excelize.File) (int, error) {
 	return lastSheetIndex, nil
 }
 
-func SelectSheet(excelFile *excelize.File, sheetName string, sheetIndex int) error {
-	excelFile.SetActiveSheet(sheetIndex)
-	log.Debug(fmt.Sprintf("Selected sheet '%s' at index '%d'", sheetName, sheetIndex))
-	return nil
-}
-
 func FindTemplateSheet(excelFile *excelize.File, templateSheetName string) (int, error) {
 	if templateSheetName == "" {
 		log.Debug(("Template sheet name not provided. Assuming it's the first sheet."))
@@ -47,19 +39,26 @@ func FindTemplateSheet(excelFile *excelize.File, templateSheetName string) (int,
 	return index, nil
 }
 
-// perhaps not in the right place, figure out where to put this later
-// replace with helpers.GetCurrentWeekDate()
-func GetCurrentWeekSheetName() string {
-	now := time.Now()
-	today := time.Now().Weekday()
+func SelectSheet(excelFile *excelize.File, sheetName string, sheetIndex int) error {
+	excelFile.SetActiveSheet(sheetIndex)
+	log.Debug(fmt.Sprintf("Selected sheet '%s' at index '%d'", sheetName, sheetIndex))
+	return nil
+}
 
-	offset := int(time.Monday - today)
-	if offset > 0 {
-		offset = -6
+func SelectTargetSheet(fileName string, sheetName string) (*excelize.File, error) {
+	excelFile, err := OpenExcelFile(fileName)
+	if err != nil {
+		return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to set active sheet"), err)
 	}
-
-	monday := now.AddDate(0, 0, offset).Format("2006-01-02")
-
-	log.Debug(fmt.Sprintf("This week's Monday: %s", monday))
-	return monday
+	sheetIndex, err := FindSheetIndex(excelFile, sheetName)
+	if err != nil {
+		return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to set active sheet"), err)
+	}
+	if sheetIndex == -1 {
+		return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to set active sheet"), fmt.Errorf("sheet not found"))
+	} else {
+		SelectSheet(excelFile, sheetName, sheetIndex)
+	}
+	log.Debug(fmt.Sprintf("Selected target sheet %s at index %d in file %s", sheetName, sheetIndex, fileName))
+	return excelFile, nil
 }

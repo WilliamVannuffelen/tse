@@ -12,12 +12,25 @@ func OpenExcelFile(fileName string) (*excelize.File, error) {
 	if err != nil {
 		return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to open excel file"), err)
 	}
+	defer excelFile.Close()
+
 	return excelFile, nil
 }
 
-func SaveExcelFile(excelFile *excelize.File) error {
-	if err := excelFile.SaveAs("ebase.xlsx"); err != nil {
-		fmt.Println("Error saving file:", err)
+func CreateExcelFile(filePath string, date string) (*excelize.File, error) {
+	file := excelize.NewFile()
+
+	index, err := MakeSheetFromScratch(file, date)
+	if err != nil {
+		return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to create sheet"), err)
+	}
+
+	file.SetActiveSheet(index)
+	return file, nil
+}
+
+func SaveExcelFile(excelFile *excelize.File, fileName string) error {
+	if err := excelFile.SaveAs(fileName); err != nil {
 		return fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to save excel file"), err)
 	}
 	return nil
