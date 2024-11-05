@@ -28,6 +28,7 @@ var ShowTimeSheetEntryCmd = &cobra.Command{
 	SilenceErrors: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		var startOfWeek string
+		var err error
 
 		// Prep input values
 		values := getFlagValues(cmd)
@@ -35,7 +36,7 @@ var ShowTimeSheetEntryCmd = &cobra.Command{
 
 		if values["date"] != "" {
 			log.Debug("setting start of week")
-			startOfWeek, err := help.GetStartOfWeek(values["date"].(string))
+			startOfWeek, err = help.GetStartOfWeek(values["date"].(string))
 			if err != nil {
 				log.Error(err)
 				return
@@ -43,16 +44,18 @@ var ShowTimeSheetEntryCmd = &cobra.Command{
 			log.Debug("Start of week: ", startOfWeek)
 		}
 
-		err := setDefaultValues(values)
+		err = setDefaultValues(values)
 		if err != nil {
 			log.Error(err)
 			return
 		}
 		log.Debug("Date: ", values["date"])
 		if startOfWeek == "" {
+			log.Debug("Fetching start of current week")
 			startOfWeek = help.GetCurrentWeekDate()
 		}
 
+		log.Debug("Start of week: ", startOfWeek)
 		// Get & process data
 		workItems, err := getTimeSheetEntries(appConfig.File.TargetFilePath, startOfWeek)
 		if err != nil {
