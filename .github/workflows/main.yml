@@ -40,7 +40,7 @@ jobs:
     - name: Archive code coverage report
       uses: actions/upload-artifact@v4
       with:
-        name: code-coverage
+        name: coverage-report
         path: coverage.out
 
   coverage:
@@ -55,5 +55,5 @@ jobs:
     steps:
     - uses: fgrosse/go-coverage-report@v1.2.0
       with:
-        coverage-artifact-name: code-coverage
+        coverage-artifact-name: coverage-report
         coverage-file-name: coverage.out
