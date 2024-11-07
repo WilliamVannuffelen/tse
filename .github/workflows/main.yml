@@ -55,5 +55,5 @@ jobs:
     steps:
     - uses: fgrosse/go-coverage-report@v1.2.0
       with:
-        coverage-artifact: code-coverage
+        coverage-artifact-name: code-coverage
         coverage-file-name: coverage.out
