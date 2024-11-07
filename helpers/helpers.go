@@ -20,15 +20,14 @@ func NewErrorStackTraceString(message string) string {
 	return fmt.Sprintf("%s:%d - %s - %s \n from", fileName, line, callerName, message)
 }
 
-func GetCurrentWeekDate() string {
-	now := time.Now()
-	today := time.Now().Weekday()
+func GetCurrentWeekDate(now func() time.Time) string {
+	today := now().Weekday()
 
 	offset := int(time.Monday - today)
 	if offset > 0 {
 		offset = -6
 	}
-	monday := now.AddDate(0, 0, offset).Format("2006-01-02")
+	monday := now().AddDate(0, 0, offset).Format("2006-01-02")
 
 	return monday
 }
@@ -68,9 +67,9 @@ func getDayOffset(day string) (int, error) {
 	return offset, nil
 }
 
-func GetDateFromDay(day string) (string, error) {
-	now := time.Now()
-	weekday := now.Weekday()
+func GetDateFromDay(day string, now func() time.Time) (string, error) {
+	weekday := now().Weekday()
+
 	offset := int(time.Monday - weekday)
 	if offset > 0 {
 		offset = -6
@@ -79,6 +78,5 @@ func GetDateFromDay(day string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
-	return now.AddDate(0, 0, offset+dayOffset).Format("2006-01-02"), nil
+	return now().AddDate(0, 0, offset+dayOffset).Format("2006-01-02"), nil
 }

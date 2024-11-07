@@ -9,6 +9,7 @@ import (
 	help "github.com/williamvannuffelen/tse/helpers"
 	"github.com/williamvannuffelen/tse/prettyprint"
 	"github.com/williamvannuffelen/tse/workitem"
+	"time"
 )
 
 var log logger.Logger
@@ -52,7 +53,7 @@ var ShowTimeSheetEntryCmd = &cobra.Command{
 		log.Debug("Date: ", values["date"])
 		if startOfWeek == "" {
 			log.Debug("Fetching start of current week")
-			startOfWeek = help.GetCurrentWeekDate()
+			startOfWeek = help.GetCurrentWeekDate(time.Now)
 		}
 
 		log.Debug("Start of week: ", startOfWeek)
@@ -115,7 +116,7 @@ func init() {
 
 func setDateIfDayProvided(values map[string]interface{}) error {
 	values["no-week"] = true
-	date, err := help.GetDateFromDay(values["day"].(string))
+	date, err := help.GetDateFromDay(values["day"].(string), time.Now)
 	if err != nil {
 		return fmt.Errorf("%s %s", help.NewErrorStackTraceString("failed to process provided day value"), err)
 	}

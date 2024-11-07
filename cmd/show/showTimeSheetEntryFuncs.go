@@ -8,6 +8,7 @@ import (
 	help "github.com/williamvannuffelen/tse/helpers"
 	"github.com/williamvannuffelen/tse/workitem"
 	"github.com/xuri/excelize/v2"
+	"time"
 )
 
 // todo: generalize and centralize reused function
@@ -47,14 +48,14 @@ func setDefaultValues(values map[string]interface{}) error {
 
 func setDefaultDate(values map[string]interface{}) error {
 	if values["day"] != "" {
-		dateVal, err := help.GetDateFromDay(values["day"].(string))
+		dateVal, err := help.GetDateFromDay(values["day"].(string), time.Now)
 		if err != nil {
 			return fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to set default date"), err)
 		}
 		values["date"] = dateVal
 	} else {
 		if values["date"] == "" {
-			values["date"] = help.GetCurrentWeekDate()
+			values["date"] = help.GetCurrentWeekDate(time.Now)
 		}
 	}
 	return nil

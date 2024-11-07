@@ -7,6 +7,7 @@ import (
 	"github.com/williamvannuffelen/tse/config"
 	help "github.com/williamvannuffelen/tse/helpers"
 	"github.com/xuri/excelize/v2"
+	"time"
 )
 
 var log logger.Logger
@@ -26,7 +27,7 @@ func MakeOrSelectTargetSheet(fileName string, sheetName string, templateSheetNam
 
 	if sheetName == "" {
 		log.Debug("No sheet name provided, using current week's sheet name.")
-		sheetName = help.GetCurrentWeekDate()
+		sheetName = help.GetCurrentWeekDate(time.Now)
 	}
 
 	sheetIndex, err := FindSheetIndex(excelFile, sheetName)
