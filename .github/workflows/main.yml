@@ -52,8 +52,8 @@ jobs:
       contents: read
       actions: read
       pull-requests: write
-    steps:
-    - uses: fgrosse/go-coverage-report@v1.2.0
-      with:
-        coverage-artifact-name: code-coverage
-        coverage-file-name: coverage.out
+    # steps:
+    # - uses: fgrosse/go-coverage-report@v1.2.0
+    #   with:
+    #     coverage-artifact-name: code-coverage
+    #     coverage-file-name: coverage.out
