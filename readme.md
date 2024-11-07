@@ -1,4 +1,6 @@
 #  go timesheet entry cli - tse
+![GH Actions Result](https://github.com/williamvannuffelen/tse/actions/workflows/main.yml/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/williamvannuffelen/tse)](https://goreportcard.com/report/github.com/williamvannuffelen/tse)
 
 Sister project of [Kiara automation](https://github.com/WilliamVannuffelen/kiara_automation).
 

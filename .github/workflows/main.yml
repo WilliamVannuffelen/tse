@@ -1,4 +1,4 @@
-name: Go CI
+name: Test
 
 on:
   push:
@@ -36,6 +36,15 @@ jobs:
 
     - name: Run tests with coverage
       run: go test -v -coverprofile=coverage.out ./...
+
+    - name: Install go-coverage-report
+      run: go install github.com/matm/go-coverage-report@latest
+
+    - name: Generate coverage report
+      run: go-coverage-report -coverprofile=coverage.out -o coverage.txt
+
+    - name: Display coverage report
+      run: cat coverage.txt
 
     - name: Upload coverage report
       uses: actions/upload-artifact@v3
