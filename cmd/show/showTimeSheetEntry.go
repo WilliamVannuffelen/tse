@@ -76,13 +76,6 @@ var ShowTimeSheetEntryCmd = &cobra.Command{
 		}
 		log.Debug("Time spent per day: ", timeSpentPerDay)
 
-		timeSpentPerTask, err := workitem.CalculateTimeSpentPerTask(workItems)
-		if err != nil {
-			log.Error(err)
-			return
-		}
-		log.Debug("Time spent per task: ", timeSpentPerTask)
-
 		aggregatedWorkItems, err := workitem.AggregateWorkItems(workItems)
 		log.Debug(aggregatedWorkItems)
 		if err != nil {

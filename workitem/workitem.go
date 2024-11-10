@@ -14,14 +14,9 @@ func SetLogger(l logger.Logger) {
 	log = l
 }
 
-func GetCurrentDayDateString() string {
-	currentTime := time.Now()
-	return currentTime.Format("2006-01-02")
-}
-
 func (kwi *KiaraWorkItem) SetDate(date string) {
 	if date == "" {
-		date = GetCurrentDayDateString()
+		date = time.Now().Format("2006-01-02")
 		log.Debug(fmt.Sprintf("No date provided, using current date. '%s'", date))
 	}
 	kwi.Date = date
@@ -87,7 +82,6 @@ func NewKiaraWorkItem(
 		Project:     project,
 		AppRef:      appRef,
 	}
-	//log.Debug("KiaraWorkItem created.")
 	// hardcoded true for setDefaultValue since everyone logically wants a default project
 	kwi.SetDate(date)
 	kwi.SetDay(kwi.Date)
