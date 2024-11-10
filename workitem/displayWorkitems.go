@@ -92,17 +92,3 @@ func CalculateTimeSpentPerDay(entries []KiaraWorkItem) ([]TimeSpentPerDay, error
 
 	return timeSpentPerDay, nil
 }
-
-func CalculateTimeSpentPerTask(entries []KiaraWorkItem) (map[string]float64, error) {
-	timeSpentPerTask := make(map[string]float64)
-	for _, entry := range entries {
-		task := fmt.Sprintf("%s - %s", entry.Description, entry.JiraRef)
-		log.Debug(task)
-		timeSpentFloat, err := timeSpentToFloat(entry.TimeSpent)
-		if err != nil {
-			return nil, fmt.Errorf("%s %w", help.NewErrorStackTraceString("failed to calculate time spent per task"), err)
-		}
-		timeSpentPerTask[task] += timeSpentFloat
-	}
-	return timeSpentPerTask, nil
-}
