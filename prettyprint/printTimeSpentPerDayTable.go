@@ -4,14 +4,13 @@ import (
 	"fmt"
 	"github.com/fatih/color"
 	"github.com/williamvannuffelen/tse/workitem"
-	"os"
-	"reflect"
+	"io"
 	"sort"
 	"text/tabwriter"
 	"time"
 )
 
-func PrintTimeSpentPerDayTable(timeSpentPerDay []workitem.TimeSpentPerDay, filterDate string) {
+func PrintTimeSpentPerDayTable(w io.Writer, timeSpentPerDay []workitem.TimeSpentPerDay, filterDate string) {
 	sort.Slice(timeSpentPerDay, func(i, j int) bool {
 		date1, _ := time.Parse("2006-01-02", timeSpentPerDay[i].Date)
 		date2, _ := time.Parse("2006-01-02", timeSpentPerDay[j].Date)
@@ -25,7 +24,7 @@ func PrintTimeSpentPerDayTable(timeSpentPerDay []workitem.TimeSpentPerDay, filte
 	greenColor := color.New(color.FgGreen, color.Bold).SprintFunc()
 	redColor := color.New(color.FgRed, color.Bold).SprintFunc()
 
-	writer := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', tabwriter.Debug)
+	writer := tabwriter.NewWriter(w, 0, 0, 1, ' ', tabwriter.Debug)
 	fmt.Fprintln(writer, tableColor("+-----------------+-----------------+-----------------+"))
 	fmt.Fprintln(writer, tableColor("|"), dayHeaderColor("Day            "), tableColor("|"), dateHeaderColor("Date           "), tableColor("|"), timeSpentHeaderColor("TimeSpent      "), tableColor("|"))
 	fmt.Fprintln(writer, tableColor("+-----------------+-----------------+-----------------+"))
@@ -41,24 +40,6 @@ func PrintTimeSpentPerDayTable(timeSpentPerDay []workitem.TimeSpentPerDay, filte
 	}
 	fmt.Fprintln(writer, tableColor("+-----------------+-----------------+-----------------+"))
 	writer.Flush()
-}
-
-func PrintStructFields(v interface{}) {
-	val := reflect.ValueOf(v)
-	if val.Kind() == reflect.Ptr {
-		val = val.Elem()
-	}
-	if val.Kind() != reflect.Struct {
-		fmt.Println("Expected a struct")
-		return
-	}
-
-	typ := val.Type()
-	for i := 0; i < val.NumField(); i++ {
-		field := typ.Field(i)
-		value := val.Field(i).Interface()
-		fmt.Printf("%s: %v\n", field.Name, value)
-	}
 }
 
 func PrintTimeSpentWeekTotal(totalTimeSpent float64) {

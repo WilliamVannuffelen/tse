@@ -3,6 +3,7 @@ package prettyprint
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"sort"
 	"strconv"
 
@@ -16,10 +17,11 @@ type Output struct {
 	Items     []workitem.KiaraWorkItem `json:"items"`
 }
 
-func PrintSingleDayWorkItemsAsJson(workItems []workitem.KiaraWorkItem, date string, timeSpentPerDay []workitem.TimeSpentPerDay) {
+func PrintSingleDayWorkItemsAsJson(w io.Writer, workItems []workitem.KiaraWorkItem, date string) {
 	filteredWorkItems := []workitem.KiaraWorkItem{}
 	for _, item := range workItems {
 		if item.Date == date {
+			fmt.Println("item.Date: ", item.Date)
 			filteredWorkItems = append(filteredWorkItems, item)
 		}
 	}
@@ -30,8 +32,10 @@ func PrintSingleDayWorkItemsAsJson(workItems []workitem.KiaraWorkItem, date stri
 
 	totalTimeSpent := 0.0
 	for _, item := range filteredWorkItems {
+		fmt.Println("Processing item: ", item)
 		timeSpent, err := strconv.ParseFloat(item.TimeSpent, 64)
 		if err == nil {
+			fmt.Println("timeSpent incremented with:  ", timeSpent)
 			totalTimeSpent += timeSpent
 		}
 	}
@@ -39,16 +43,18 @@ func PrintSingleDayWorkItemsAsJson(workItems []workitem.KiaraWorkItem, date stri
 	if len(filteredWorkItems) > 0 {
 		day = filteredWorkItems[0].Day
 	}
+
 	output := Output{
 		Day:       day,
 		Date:      date,
 		TimeSpent: totalTimeSpent,
 		Items:     filteredWorkItems,
 	}
+	fmt.Println(output)
 	jsonOutput, err := json.MarshalIndent(output, "", "  ")
 	if err != nil {
-		fmt.Println("Error marshalling output: ", err)
+		fmt.Fprintln(w, "Error marshalling output: ", err)
 		return
 	}
-	fmt.Println(string(jsonOutput))
+	fmt.Fprintln(w, string(jsonOutput))
 }

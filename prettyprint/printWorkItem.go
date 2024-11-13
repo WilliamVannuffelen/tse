@@ -4,17 +4,18 @@ import (
 	"fmt"
 	"github.com/fatih/color"
 	"github.com/williamvannuffelen/tse/workitem"
+	"io"
 )
 
-func PrintWorkItem(workItem *workitem.KiaraWorkItem) {
+func PrintWorkItem(w io.Writer, workItem *workitem.KiaraWorkItem) {
 	keyColor := color.New(color.FgCyan).SprintFunc()
 	valueColor := color.New(color.FgYellow).SprintFunc()
-	fmt.Println("Added timesheet entry:")
-	fmt.Println(keyColor("  \"Day\":"), valueColor(workItem.Day))
-	fmt.Println(keyColor("  \"Date\":"), valueColor(workItem.Date))
-	fmt.Println(keyColor("  \"Description\":"), valueColor(workItem.Description))
-	fmt.Println(keyColor("  \"JiraRef\":"), valueColor(workItem.JiraRef))
-	fmt.Println(keyColor("  \"TimeSpent\":"), valueColor(workItem.TimeSpent))
-	fmt.Println(keyColor("  \"Project\":"), valueColor(workItem.Project))
-	fmt.Println(keyColor("  \"AppRef\":"), valueColor(workItem.AppRef))
+	fmt.Fprintln(w, "Added timesheet entry:")
+	fmt.Fprintln(w, keyColor("  \"Day\":"), valueColor(workItem.Day))
+	fmt.Fprintln(w, keyColor("  \"Date\":"), valueColor(workItem.Date))
+	fmt.Fprintln(w, keyColor("  \"Description\":"), valueColor(workItem.Description))
+	fmt.Fprintln(w, keyColor("  \"JiraRef\":"), valueColor(workItem.JiraRef))
+	fmt.Fprintln(w, keyColor("  \"TimeSpent\":"), valueColor(workItem.TimeSpent))
+	fmt.Fprintln(w, keyColor("  \"Project\":"), valueColor(workItem.Project))
+	fmt.Fprintln(w, keyColor("  \"AppRef\":"), valueColor(workItem.AppRef))
 }

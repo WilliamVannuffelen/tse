@@ -3,6 +3,7 @@ package prettyprint
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"sort"
 	"strconv"
 
@@ -22,7 +23,7 @@ type WorkItemOutput struct {
 	Items              []workitem.KiaraWorkItem `json:"items"`
 }
 
-func PrintWorkItemsAsJson(workItems []workitem.KiaraWorkItem, timeSpentPerDay []workitem.TimeSpentPerDay, firstDateOfWeek string) {
+func PrintWorkItemsAsJson(w io.Writer, workItems []workitem.KiaraWorkItem, timeSpentPerDay []workitem.TimeSpentPerDay, firstDateOfWeek string) {
 	sort.Slice(workItems, func(i, j int) bool {
 		return workItems[i].Description < workItems[j].Description
 	})
@@ -77,5 +78,5 @@ func PrintWorkItemsAsJson(workItems []workitem.KiaraWorkItem, timeSpentPerDay []
 		fmt.Println("Error marshalling output: ", err)
 		return
 	}
-	fmt.Println(string(jsonOutput))
+	fmt.Fprintln(w, string(jsonOutput))
 }

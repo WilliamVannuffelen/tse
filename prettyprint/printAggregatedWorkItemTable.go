@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"github.com/fatih/color"
 	"github.com/williamvannuffelen/tse/workitem"
-	"os"
+	"io"
 	"sort"
 	"strings"
 	"text/tabwriter"
 )
 
-func PrintAggregatedWorkItemTable(workItems []workitem.AggregatedWorkItem, showProject bool, showAppRef bool, showJiraRef bool) {
+func PrintAggregatedWorkItemTable(w io.Writer, workItems []workitem.AggregatedWorkItem, showProject bool, showAppRef bool, showJiraRef bool) {
 	sort.Slice(workItems, func(i, j int) bool {
 		return workItems[i].Description < workItems[j].Description
 	})
@@ -66,7 +66,7 @@ func PrintAggregatedWorkItemTable(workItems []workitem.AggregatedWorkItem, showP
 	redColor := color.New(color.FgRed, color.Bold).SprintFunc()
 	blueBoldColor := color.New(color.FgBlue, color.Bold).SprintFunc()
 
-	writer := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', tabwriter.Debug)
+	writer := tabwriter.NewWriter(w, 0, 0, 1, ' ', tabwriter.Debug)
 
 	header := tableColor("|")
 	separator := tableColor("+")
