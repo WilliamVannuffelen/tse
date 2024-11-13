@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"github.com/fatih/color"
 	"github.com/williamvannuffelen/tse/workitem"
-	"os"
+	"io"
 	"sort"
 	"strings"
 	"text/tabwriter"
 )
 
-func PrintSingleDayWorkItemTable(workItems []workitem.KiaraWorkItem, date string, showProject bool, showAppRef bool, showJiraRef bool) {
+func PrintSingleDayWorkItemTable(w io.Writer, workItems []workitem.KiaraWorkItem, date string, showProject bool, showAppRef bool, showJiraRef bool) {
 	filteredWorkItems := []workitem.KiaraWorkItem{}
 	for _, item := range workItems {
 		if item.Date == date {
@@ -71,7 +71,7 @@ func PrintSingleDayWorkItemTable(workItems []workitem.KiaraWorkItem, date string
 	appRefHeaderColor := color.New(color.FgCyan, color.Bold).SprintFunc()
 	timeSpentHeaderColor := color.New(color.FgRed, color.Bold).SprintFunc()
 
-	writer := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', tabwriter.Debug)
+	writer := tabwriter.NewWriter(w, 0, 0, 1, ' ', tabwriter.Debug)
 	header := tableColor("|")
 	separator := tableColor("+")
 
@@ -101,7 +101,6 @@ func PrintSingleDayWorkItemTable(workItems []workitem.KiaraWorkItem, date string
 	fmt.Fprintf(writer, "%s\n", separator)
 
 	for _, entry := range filteredWorkItems {
-		//timeSpentColor := redColor
 		row := tableColor("|")
 		if hasDescription {
 			row += fmt.Sprintf(" %s %s", descriptionHeaderColor(fmt.Sprintf("%-*s", maxDescriptionLen, entry.Description)), tableColor("|"))

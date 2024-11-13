@@ -8,6 +8,7 @@ import (
 	help "github.com/williamvannuffelen/tse/helpers"
 	"github.com/williamvannuffelen/tse/prettyprint"
 	"github.com/williamvannuffelen/tse/workitem"
+	"os"
 )
 
 var log logger.Logger
@@ -76,7 +77,7 @@ var AddTimeSheetEntryCmd = &cobra.Command{
 			log.Error(err)
 			return
 		}
-		prettyprint.PrintWorkItem(workItem)
+		prettyprint.PrintWorkItem(os.Stdout, workItem)
 	},
 }
 
